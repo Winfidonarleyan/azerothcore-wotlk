@@ -40,6 +40,10 @@
 #include "LuaEngine.h"
 #endif
 
+#ifdef KARGATUM_RRBG
+#include "KargatumRRBG.h"
+#endif
+
 /*********************************************************/
 /***            BATTLEGROUND MANAGER                   ***/
 /*********************************************************/
@@ -422,7 +426,7 @@ uint32 BattlegroundMgr::GetNextClientVisibleInstanceId()
 Battleground* BattlegroundMgr::CreateNewBattleground(BattlegroundTypeId bgTypeId, uint32 minLevel, uint32 maxLevel, uint8 arenaType, bool isRated)
 {
     // pussywizard: random battleground is chosen before calling this function!
-    ASSERT(bgTypeId != BATTLEGROUND_RB);
+    ASSERT(!IsRandomBG(bgTypeId));
 
     // pussywizard: randomize for all arena
     if (bgTypeId == BATTLEGROUND_AA)
@@ -483,7 +487,7 @@ bool BattlegroundMgr::CreateBattleground(CreateBattlegroundData& data)
     if (bg == NULL)
         return false;
 
-    bg->SetMapId(data.bgTypeId == BATTLEGROUND_RB ? randomBgDifficultyEntry.mapId : data.MapID);
+    bg->SetMapId(IsRandomBG(data.bgTypeId) ? randomBgDifficultyEntry.mapId : data.MapID);
     bg->SetBgTypeID(data.bgTypeId);
     bg->SetInstanceID(0);
     bg->SetArenaorBGType(data.IsArena);
@@ -560,7 +564,7 @@ void BattlegroundMgr::CreateInitialBattlegrounds()
             continue;
         }
 
-        if (data.bgTypeId == BATTLEGROUND_AA || data.bgTypeId == BATTLEGROUND_RB)
+        if (data.bgTypeId == BATTLEGROUND_AA || IsRandomBG(data.bgTypeId))
         {
             data.Team1StartLocX = 0;
             data.Team1StartLocY = 0;
@@ -976,6 +980,14 @@ void BattlegroundMgr::InviteGroupToBG(GroupQueueInfo* ginfo, Battleground* bg, T
         if (bg->isArena() && bg->isRated())
             bg->ArenaLogEntries[player->GetGUID()].Fill(player->GetName().c_str(), player->GetGUIDLow(), player->GetSession()->GetAccountId(), ginfo->ArenaTeamId, player->GetSession()->GetRemoteAddress());
     }
+}
+
+bool BattlegroundMgr::IsRandomBG(BattlegroundTypeId type)
+{
+#ifdef KARGATUM_RRBG
+    return type == BATTLEGROUND_RB || type == (BattlegroundTypeId)BATTLEGROUND_RATING;
+#endif
+    return type == BATTLEGROUND_RB;
 }
 
 RandomBattlegroundSystem::RandomBattlegroundSystem() : m_CurrentRandomBg(BATTLEGROUND_TYPE_NONE), m_SwitchTimer(0)

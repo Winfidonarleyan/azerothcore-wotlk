@@ -578,20 +578,6 @@ void ArenaTeam::MassInviteToEvent(WorldSession* session)
     session->SendPacket(&data);
 }
 
-uint8 ArenaTeam::GetSlotByType(uint32 type)
-{
-    switch (type)
-    {
-        case ARENA_TEAM_2v2: return 0;
-        case ARENA_TEAM_3v3: return 1;
-        case ARENA_TEAM_5v5: return 2;
-        default:
-            break;
-    }
-    sLog->outError("FATAL: Unknown arena team type %u for some arena team", type);
-    return 0xFF;
-}
-
 bool ArenaTeam::IsMember(uint64 guid) const
 {
     for (MemberList::const_iterator itr = Members.begin(); itr != Members.end(); ++itr)
@@ -952,3 +938,22 @@ ArenaTeamMember* ArenaTeam::GetMember(uint64 guid)
 
     return NULL;
 }
+
+uint8 ArenaTeam::GetSlotByType(uint32 type)
+{
+    if (!ArenaSlotByType.count(type))
+    {
+        sLog->outError("FATAL: Unknown arena team type %u for some arena team", type);
+        return 0xFF;
+    }
+
+    return ArenaSlotByType[type];
+}
+
+// init/update unordered_map's ArenaSlotByType's
+std::unordered_map<uint32, uint8> ArenaTeam::ArenaSlotByType =
+{
+    { ARENA_TEAM_2v2, 0},
+    { ARENA_TEAM_3v3, 1},
+    { ARENA_TEAM_5v5, 2},
+};

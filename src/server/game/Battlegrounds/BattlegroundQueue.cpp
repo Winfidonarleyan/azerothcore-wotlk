@@ -18,6 +18,10 @@
 #include "Channel.h"
 #include <unordered_map>
 
+#ifdef KARGATUM_RRBG
+#include "KargatumRRBG.h"
+#endif
+
 struct BGSpamProtectionS
 {
     uint32 last_queue = 0; // CHAT DISABLED BY DEFAULT
@@ -125,6 +129,11 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player * leader, Group * grp, PvPDif
 {
     BattlegroundBracketId bracketId = bracketEntry->GetBracketId();
 
+#ifdef KARGATUM_RRBG
+    if (sRatingBG->IsSystemEnable() && m_bgTypeId == (BattlegroundTypeId)BATTLEGROUND_RATING)
+        isRated = true;
+#endif
+
     // create new ginfo
     GroupQueueInfo* ginfo               = new GroupQueueInfo;
     ginfo->BgTypeId                     = m_bgTypeId;
@@ -146,7 +155,7 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player * leader, Group * grp, PvPDif
     //compute index (if group is premade or joined a rated match) to queues
     uint32 index = 0;
 
-    if (!isRated && !isPremade)
+    if ((!isRated && !isPremade) || (isRated && !m_arenaType))
         index += BG_TEAMS_COUNT;
 
     if (ginfo->teamId == TEAM_HORDE)
@@ -155,6 +164,11 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player * leader, Group * grp, PvPDif
     // pussywizard: store indices at which GroupQueueInfo is in m_QueuedGroups
     ginfo->_bracketId = bracketId;
     ginfo->_groupType = index;
+
+#ifdef KARGATUM_RRBG
+    if (sRatingBG->IsSystemEnable() && isRated && !m_arenaType && m_bgTypeId == (BattlegroundTypeId)BATTLEGROUND_RATING)
+        ginfo->SoloRating = sRatingBG->GetSoloRaing(leader);
+#endif
 
     // announce world (this doesn't need mutex)
     if (isRated && sWorld->getBoolConfig(CONFIG_ARENA_QUEUE_ANNOUNCER_ENABLE))
@@ -186,7 +200,7 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player * leader, Group * grp, PvPDif
     m_QueuedGroups[bracketId][index].push_back(ginfo);
 
     //announce current queue status
-    if (!isRated && !isPremade && sWorld->getBoolConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE))
+    if (!ginfo->ArenaType && !isPremade && sWorld->getBoolConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE))
         if (Battleground * bgt = sBattlegroundMgr->GetBattlegroundTemplate(ginfo->BgTypeId))
         {
             char const* bgName = bgt->GetName();
@@ -732,8 +746,13 @@ void BattlegroundQueue::BattlegroundQueueUpdate(BattlegroundBracketId bracket_id
         MaxPlayersPerTeam = m_arenaType;
     }
 
+#ifdef KARGATUM_RRBG
+    if (m_bgTypeId == (BattlegroundTypeId)BATTLEGROUND_RATING && sRatingBG->IsSystemEnable())
+        sRatingBG->QueueUpdate(this, bracket_id);
+#endif
+
     // check if can start new premade battleground
-    if (bg_template->isBattleground() && m_bgTypeId != BATTLEGROUND_RB)
+    if (bg_template->isBattleground() && !sBattlegroundMgr->IsRandomBG(m_bgTypeId))
         if (CheckPremadeMatch(bracket_id, MinPlayersPerTeam, MaxPlayersPerTeam))
         {
             // create new battleground

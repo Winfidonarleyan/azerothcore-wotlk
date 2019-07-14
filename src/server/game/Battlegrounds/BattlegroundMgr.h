@@ -141,6 +141,8 @@ class BattlegroundMgr
         static std::unordered_map<int, Battleground*> bgtypeToBattleground; // BattlegroundTypeId -> Battleground*
         static std::unordered_map<int, bgRef> bgTypeToTemplate; // BattlegroundTypeId -> bgRef
 
+        bool IsRandomBG(BattlegroundTypeId type);
+
     private:
         bool CreateBattleground(CreateBattlegroundData& data);
         uint32 GetNextClientVisibleInstanceId();

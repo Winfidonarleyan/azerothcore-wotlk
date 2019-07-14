@@ -36,6 +36,9 @@ struct GroupQueueInfo                                       // stores informatio
     // pussywizard: for internal use
     uint8 _bracketId;
     uint8 _groupType;
+
+    // For solo rating
+    uint32 SoloRating;                                      // For rating bg and solo arena
 };
 
 enum BattlegroundQueueGroupTypes

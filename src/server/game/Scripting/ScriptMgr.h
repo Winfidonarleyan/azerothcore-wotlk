@@ -1102,8 +1102,11 @@ public:
     // Start Battlegroud
     virtual void OnBattlegroundStart(Battleground* /*bg*/) { }
 
-    // End Battleground
+    // End Battleground for reward players
     virtual void OnBattlegroundEndReward(Battleground* /*bg*/, Player* /*player*/, TeamId /*winnerTeamId*/) { }
+
+    // End Battleground
+    virtual void OnBattlegroundEnd(Battleground* /*bg*/, TeamId /*winnerTeamId*/) { }
 
     // Update Battlegroud
     virtual void OnBattlegroundUpdate(Battleground* /*bg*/, uint32 /*diff*/) { }
@@ -1484,6 +1487,7 @@ class ScriptMgr
 
         void OnBattlegroundStart(Battleground* bg);
         void OnBattlegroundEndReward(Battleground* bg, Player* player, TeamId winnerTeamId);
+        void OnBattlegroundEnd(Battleground* bg, TeamId winnerTeamId);
         void OnBattlegroundUpdate(Battleground* bg, uint32 diff);
         void OnBattlegroundAddPlayer(Battleground* bg, Player* player);
         void OnBattlegroundBeforeAddPlayer(Battleground* bg, Player* player);

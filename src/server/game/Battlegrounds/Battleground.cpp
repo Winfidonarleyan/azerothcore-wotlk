@@ -1055,6 +1055,8 @@ void Battleground::EndBattleground(TeamId winnerTeamId)
     if (winmsg_id)
         SendMessageToAll(winmsg_id, CHAT_MSG_BG_SYSTEM_NEUTRAL);
 
+    sScriptMgr->OnBattlegroundEnd(this, winnerTeamId);
+
 #ifdef ELUNA
     sEluna->OnBGEnd(this, GetBgTypeID(), GetInstanceID(), winnerTeamId);
 #endif
@@ -1320,9 +1322,15 @@ bool Battleground::HasFreeSlots() const
 {
     if (GetStatus() != STATUS_WAIT_JOIN && GetStatus() != STATUS_IN_PROGRESS)
         return false;
-    for (uint8 i=0; i<BG_TEAMS_COUNT; ++i)
+
+    // If RRBG
+    if (m_IsRated && !m_IsArena)
+        return false;
+
+    for (uint8 i = 0; i < BG_TEAMS_COUNT; ++i)
         if (GetFreeSlotsForTeam((TeamId)i) > 0)
             return true;
+
     return false;
 }
 

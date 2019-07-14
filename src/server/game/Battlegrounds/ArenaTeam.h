@@ -175,6 +175,8 @@ class ArenaTeam
         void FinishWeek();
         void FinishGame(int32 mod, const Map* bgMap);
 
+        static std::unordered_map<uint32, uint8> ArenaSlotByType;
+
     protected:
 
         uint32      TeamId;

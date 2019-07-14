@@ -24,6 +24,10 @@
 #include "Group.h"
 #include "ScriptMgr.h"
 
+#ifdef KARGATUM_RRBG
+#include "KargatumRRBG.h"
+#endif
+
 void WorldSession::HandleBattlemasterHelloOpcode(WorldPacket & recvData)
 {
     uint64 guid;
@@ -131,6 +135,9 @@ void WorldSession::HandleBattlemasterJoinOpcode(WorldPacket & recvData)
         return;
     }
 
+    if (!sRatingBG->IsAllCheckPassed(_player, joinAsGroup, bgt))
+        return;
+
     // queue result (default ok)
     GroupJoinBattlegroundResult err = GroupJoinBattlegroundResult(bgt->GetBgTypeID());
 
@@ -145,7 +152,7 @@ void WorldSession::HandleBattlemasterJoinOpcode(WorldPacket & recvData)
             err = ERR_GROUP_JOIN_BATTLEGROUND_DESERTERS;
         else if (_player->InBattlegroundQueueForBattlegroundQueueType(bgQueueTypeIdRandom)) // queued for random bg, so can't queue for anything else
             err = ERR_IN_RANDOM_BG;
-        else if (_player->InBattlegroundQueue() && bgTypeId == BATTLEGROUND_RB) // already in queue, so can't queue for random
+        else if (_player->InBattlegroundQueue() && sBattlegroundMgr->IsRandomBG(bgTypeId)) // already in queue, so can't queue for random
             err = ERR_IN_NON_RANDOM_BG;
         else if (_player->InBattlegroundQueueForBattlegroundQueueType(BATTLEGROUND_QUEUE_2v2) ||
                  _player->InBattlegroundQueueForBattlegroundQueueType(BATTLEGROUND_QUEUE_3v3) ||
@@ -163,7 +170,6 @@ void WorldSession::HandleBattlemasterJoinOpcode(WorldPacket & recvData)
         BattlegroundQueue& bgQueue = sBattlegroundMgr->GetBattlegroundQueue(bgQueueTypeId);
         GroupQueueInfo* ginfo = bgQueue.AddGroup(_player, NULL, bracketEntry, false, false, 0, 0, 0);
         uint32 avgWaitTime = bgQueue.GetAverageQueueWaitTime(ginfo);
-
         uint32 queueSlot = _player->AddBattlegroundQueueId(bgQueueTypeId);
 
         // send status packet
@@ -208,7 +214,7 @@ void WorldSession::HandleBattlemasterJoinOpcode(WorldPacket & recvData)
 
         if (_player->InBattlegroundQueueForBattlegroundQueueType(bgQueueTypeIdRandom)) // queued for random bg, so can't queue for anything else
             err = ERR_IN_RANDOM_BG;
-        else if (_player->InBattlegroundQueue() && bgTypeId == BATTLEGROUND_RB) // already in queue, so can't queue for random
+        else if (_player->InBattlegroundQueue() && sBattlegroundMgr->IsRandomBG(bgTypeId)) // already in queue, so can't queue for random
             err = ERR_IN_NON_RANDOM_BG;
         else if (_player->InBattlegroundQueueForBattlegroundQueueType(BATTLEGROUND_QUEUE_2v2) ||
                  _player->InBattlegroundQueueForBattlegroundQueueType(BATTLEGROUND_QUEUE_3v3) ||
@@ -218,7 +224,7 @@ void WorldSession::HandleBattlemasterJoinOpcode(WorldPacket & recvData)
         if (err > 0)
             err = grp->CanJoinBattlegroundQueue(bgt, bgQueueTypeId, 0, bgt->GetMaxPlayersPerTeam(), false, 0);
 
-        bool isPremade = (grp->GetMembersCount() >= bgt->GetMinPlayersPerTeam() && bgTypeId != BATTLEGROUND_RB);
+        bool isPremade = (grp->GetMembersCount() >= bgt->GetMinPlayersPerTeam() && !sBattlegroundMgr->IsRandomBG(bgTypeId));
         uint32 avgWaitTime = 0;
 
         if (err > 0)
