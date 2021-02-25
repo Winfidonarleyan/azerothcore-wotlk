@@ -5,8 +5,8 @@
  */
 
 #include "ByteBuffer.h"
-#include "MovementPacketBuilder.h"
 #include "MoveSpline.h"
+#include "MovementPacketBuilder.h"
 
 namespace Movement
 {

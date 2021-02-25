@@ -39,8 +39,8 @@
 #include "GuildMgr.h"
 #include "InstanceSaveMgr.h"
 #include "InstanceScript.h"
-#include "Language.h"
 #include "LFGMgr.h"
+#include "Language.h"
 #include "Log.h"
 #include "LootItemStorage.h"
 #include "MapInstanced.h"
@@ -56,7 +56,6 @@
 #include "PoolMgr.h"
 #include "QuestDef.h"
 #include "ReputationMgr.h"
-#include "revision.h"
 #include "SavingSystem.h"
 #include "ScriptMgr.h"
 #include "SkillDiscovery.h"
@@ -77,6 +76,7 @@
 #include "World.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
+#include "revision.h"
 
 #ifdef ELUNA
 #include "LuaEngine.h"

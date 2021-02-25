@@ -11,9 +11,9 @@
 #include "Creature.h"
 #include "CreatureAI.h"
 #include "Spell.h"
+#include "Unit.h"
 //#include "SmartAI.h"
 //#include "SmartScript.h"
-#include "Unit.h"
 
 struct WayPoint
 {

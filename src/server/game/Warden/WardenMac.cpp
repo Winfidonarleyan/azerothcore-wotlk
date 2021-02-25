@@ -6,11 +6,11 @@
 
 #include "ByteBuffer.h"
 #include "Common.h"
-#include "WardenKeyGeneration.h"
 #include "Log.h"
 #include "Opcodes.h"
 #include "Player.h"
 #include "Util.h"
+#include "WardenKeyGeneration.h"
 #include "WardenMac.h"
 #include "WardenModuleMac.h"
 #include "World.h"

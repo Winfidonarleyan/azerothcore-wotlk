@@ -16,8 +16,8 @@
 #include "UpdateData.h"
 #include "UpdateMask.h"
 #include <set>
-#include <string>
 #include <sstream>
+#include <string>
 
 #ifdef ELUNA
 class ElunaEventProcessor;

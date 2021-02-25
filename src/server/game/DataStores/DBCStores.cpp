@@ -6,8 +6,8 @@
 
 #include "BattlegroundMgr.h"
 #include "DBCFileLoader.h"
-#include "DBCfmt.h"
 #include "DBCStores.h"
+#include "DBCfmt.h"
 #include "Errors.h"
 #include "Log.h"
 #include "SharedDefines.h"

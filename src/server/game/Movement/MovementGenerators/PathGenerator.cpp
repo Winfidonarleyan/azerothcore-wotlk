@@ -9,9 +9,9 @@
 #include "DisableMgr.h"
 #include "Geometry.h"
 #include "Log.h"
-#include "Map.h"
 #include "MMapFactory.h"
 #include "MMapManager.h"
+#include "Map.h"
 #include "PathGenerator.h"
 
  ////////////////// PathGenerator //////////////////

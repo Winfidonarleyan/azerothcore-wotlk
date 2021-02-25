@@ -13,8 +13,8 @@
 #include "Opcodes.h"
 #include "PacketLog.h"
 #include "Player.h"
-#include "ScriptMgr.h"
 #include "SHA1.h"
+#include "ScriptMgr.h"
 #include "SharedDefines.h"
 #include "Util.h"
 #include "World.h"
@@ -23,14 +23,14 @@
 #include "WorldSocket.h"
 #include "WorldSocketMgr.h"
 #include <ace/Message_Block.h>
-#include <ace/os_include/arpa/os_inet.h>
-#include <ace/os_include/netinet/os_tcp.h>
-#include <ace/os_include/sys/os_socket.h>
-#include <ace/os_include/sys/os_types.h>
 #include <ace/OS_NS_string.h>
 #include <ace/OS_NS_string.h>
 #include <ace/OS_NS_unistd.h>
 #include <ace/Reactor.h>
+#include <ace/os_include/arpa/os_inet.h>
+#include <ace/os_include/netinet/os_tcp.h>
+#include <ace/os_include/sys/os_socket.h>
+#include <ace/os_include/sys/os_types.h>
 #include <thread>
 
 #ifdef ELUNA

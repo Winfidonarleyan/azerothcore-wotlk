@@ -22,8 +22,8 @@
 #include "Pet.h"
 #include "ScriptMgr.h"
 #include "Transport.h"
-#include "Vehicle.h"
 #include "VMapFactory.h"
+#include "Vehicle.h"
 
 #ifdef ELUNA
 #include "LuaEngine.h"
