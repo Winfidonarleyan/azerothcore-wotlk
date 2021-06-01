@@ -37,9 +37,9 @@ private:
     int subnegotiate();     ///< Used by telnet protocol RFC 854 / 855
     int check_access_level(const std::string& user);
     int check_password(const std::string& user, const std::string& pass);
-    int send(const std::string& line);
+    int send(std::string_view line);
 
-    static void zprint(void* callbackArg, const char* szText);
+    static void zprint(void* callbackArg, std::string_view szText);
     static void commandFinished(void* callbackArg, bool success);
 
 private:

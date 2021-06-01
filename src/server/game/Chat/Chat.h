@@ -46,23 +46,39 @@ public:
     virtual ~ChatHandler() { }
 
     // Builds chat packet and returns receiver guid position in the packet to substitute in whisper builders
-    static size_t BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, ObjectGuid senderGUID, ObjectGuid receiverGUID, std::string const& message, uint8 chatTag,
+    static size_t BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, ObjectGuid senderGUID, ObjectGuid receiverGUID, std::string_view, uint8 chatTag,
                                   std::string const& senderName = "", std::string const& receiverName = "",
                                   uint32 achievementId = 0, bool gmMessage = false, std::string const& channelName = "");
 
     // Builds chat packet and returns receiver guid position in the packet to substitute in whisper builders
-    static size_t BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, WorldObject const* sender, WorldObject const* receiver, std::string const& message, uint32 achievementId = 0, std::string const& channelName = "", LocaleConstant locale = DEFAULT_LOCALE);
+    static size_t BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, WorldObject const* sender, WorldObject const* receiver,
+        std::string_view message, uint32 achievementId = 0, std::string const& channelName = "", LocaleConstant locale = DEFAULT_LOCALE);
 
     static char* LineFromMessage(char*& pos) { char* start = strtok(pos, "\n"); pos = nullptr; return start; }
 
     // function with different implementation for chat/console
     virtual char const* GetAcoreString(uint32 entry) const;
-    virtual void SendSysMessage(char const* str);
+    virtual void SendSysMessage(std::string_view str, bool escapeCharacters = false);
 
     void SendSysMessage(uint32 entry);
-    void PSendSysMessage(char const* format, ...) ATTR_PRINTF(2, 3);
-    void PSendSysMessage(uint32 entry, ...);
-    std::string PGetParseString(uint32 entry, ...) const;
+
+    template<typename... Args>
+    void PSendSysMessage(char const* fmt, Args&&... args)
+    {
+        SendSysMessage(Acore::StringFormat(fmt, std::forward<Args>(args)...).c_str());
+    }
+
+    template<typename... Args>
+    void PSendSysMessage(uint32 entry, Args&&... args)
+    {
+        SendSysMessage(PGetParseString(entry, std::forward<Args>(args)...).c_str());
+    }
+
+    template<typename... Args>
+    std::string PGetParseString(uint32 entry, Args&&... args) const
+    {
+        return Acore::StringFormat(GetAcoreString(entry), std::forward<Args>(args)...);
+    }
 
     bool ParseCommands(const char* text);
 
@@ -135,13 +151,13 @@ private:
 class CliHandler : public ChatHandler
 {
 public:
-    typedef void Print(void*, char const*);
-    explicit CliHandler(void* callbackArg, Print* zprint) : m_callbackArg(callbackArg), m_print(zprint) {}
+    using Print = void(void*, std::string_view);
+    explicit CliHandler(void* callbackArg, Print* zprint) : m_callbackArg(callbackArg), m_print(zprint) { }
 
     // overwrite functions
     char const* GetAcoreString(uint32 entry) const override;
     bool isAvailable(ChatCommand const& cmd) const override;
-    void SendSysMessage(const char* str) override;
+    void SendSysMessage(std::string_view, bool escapeCharacters) override;
     std::string GetNameLink() const override;
     bool needReportToTarget(Player* chr) const override;
     LocaleConstant GetSessionDbcLocale() const override;

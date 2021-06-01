@@ -4,9 +4,9 @@
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  */
 
+#include "Chat.h"
 #include "AccountMgr.h"
 #include "CellImpl.h"
-#include "Chat.h"
 #include "ChatLink.h"
 #include "Common.h"
 #include "DatabaseEnv.h"
@@ -19,6 +19,7 @@
 #include "Realm.h"
 #include "ScriptMgr.h"
 #include "SpellMgr.h"
+#include "Tokenize.h"
 #include "UpdateMask.h"
 #include "World.h"
 #include "WorldPacket.h"
@@ -56,17 +57,6 @@ std::vector<ChatCommand> const& ChatHandler::getCommandTable()
     }
 
     return commandTableCache;
-}
-
-std::string ChatHandler::PGetParseString(uint32 entry, ...) const
-{
-    const char* format = GetAcoreString(entry);
-    char str[1024];
-    va_list ap;
-    va_start(ap, entry);
-    vsnprintf(str, 1024, format, ap);
-    va_end(ap);
-    return std::string(str);
 }
 
 char const* ChatHandler::GetAcoreString(uint32 entry) const
@@ -156,83 +146,54 @@ bool ChatHandler::hasStringAbbr(const char* name, const char* part)
     return true;
 }
 
-void ChatHandler::SendSysMessage(const char* str)
+void ChatHandler::SendSysMessage(std::string_view str, bool escapeCharacters)
 {
+    std::string msg{ str };
+
+    // Replace every "|" with "||" in msg
+    if (escapeCharacters && msg.find('|') != std::string::npos)
+    {
+        std::vector<std::string_view> tokens = Acore::Tokenize(msg, '|', true);
+        std::ostringstream stream;
+
+        for (size_t i = 0; i < tokens.size() - 1; ++i)
+            stream << tokens[i] << "||";
+
+        stream << tokens[tokens.size() - 1];
+
+        msg = stream.str();
+    }
+
     WorldPacket data;
-
-    // need copy to prevent corruption by strtok call in LineFromMessage original string
-    char* buf = strdup(str);
-    char* pos = buf;
-
-    while (char* line = LineFromMessage(pos))
+    for (std::string_view line : Acore::Tokenize(str, '\n', true))
     {
         BuildChatPacket(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, nullptr, nullptr, line);
         m_session->SendPacket(&data);
     }
-
-    free(buf);
 }
 
 void ChatHandler::SendGlobalSysMessage(const char* str)
 {
-    // Chat output
     WorldPacket data;
-
-    // need copy to prevent corruption by strtok call in LineFromMessage original string
-    char* buf = strdup(str);
-    char* pos = buf;
-
-    while (char* line = LineFromMessage(pos))
+    for (std::string_view line : Acore::Tokenize(str, '\n', true))
     {
         BuildChatPacket(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, nullptr, nullptr, line);
         sWorld->SendGlobalMessage(&data);
     }
-
-    free(buf);
 }
 
 void ChatHandler::SendGlobalGMSysMessage(const char* str)
 {
-    // Chat output
     WorldPacket data;
-
-    // need copy to prevent corruption by strtok call in LineFromMessage original string
-    char* buf = strdup(str);
-    char* pos = buf;
-
-    while (char* line = LineFromMessage(pos))
+    for (std::string_view line : Acore::Tokenize(str, '\n', true))
     {
         BuildChatPacket(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, nullptr, nullptr, line);
         sWorld->SendGlobalGMMessage(&data);
     }
-
-    free(buf);
 }
-
 void ChatHandler::SendSysMessage(uint32 entry)
 {
     SendSysMessage(GetAcoreString(entry));
-}
-
-void ChatHandler::PSendSysMessage(uint32 entry, ...)
-{
-    const char* format = GetAcoreString(entry);
-    va_list ap;
-    char str [2048];
-    va_start(ap, entry);
-    vsnprintf(str, 2048, format, ap);
-    va_end(ap);
-    SendSysMessage(str);
-}
-
-void ChatHandler::PSendSysMessage(const char* format, ...)
-{
-    va_list ap;
-    char str [2048];
-    va_start(ap, format);
-    vsnprintf(str, 2048, format, ap);
-    va_end(ap);
-    SendSysMessage(str);
 }
 
 bool ChatHandler::ExecuteCommandInTable(std::vector<ChatCommand> const& table, const char* text, std::string const& fullcmd)
@@ -596,7 +557,7 @@ bool ChatHandler::ShowHelpForCommand(std::vector<ChatCommand> const& table, cons
     return ShowHelpForSubCommands(table, "", cmd);
 }
 
-size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, ObjectGuid senderGUID, ObjectGuid receiverGUID, std::string const& message, uint8 chatTag,
+size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, ObjectGuid senderGUID, ObjectGuid receiverGUID, std::string_view message, uint8 chatTag,
                                     std::string const& senderName /*= ""*/, std::string const& receiverName /*= ""*/,
                                     uint32 achievementId /*= 0*/, bool gmMessage /*= false*/, std::string const& channelName /*= ""*/)
 {
@@ -676,7 +637,7 @@ size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Languag
     return receiverGUIDPos;
 }
 
-size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, WorldObject const* sender, WorldObject const* receiver, std::string const& message,
+size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, WorldObject const* sender, WorldObject const* receiver, std::string_view message,
                                     uint32 achievementId /*= 0*/, std::string const& channelName /*= ""*/, LocaleConstant locale /*= DEFAULT_LOCALE*/)
 {
     ObjectGuid senderGUID;
@@ -1240,7 +1201,7 @@ bool CliHandler::isAvailable(ChatCommand const& cmd) const
     return cmd.AllowConsole;
 }
 
-void CliHandler::SendSysMessage(const char* str)
+void CliHandler::SendSysMessage(std::string_view str, bool /*escapeCharacters*/)
 {
     m_print(m_callbackArg, str);
     m_print(m_callbackArg, "\r\n");

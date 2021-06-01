@@ -57,7 +57,7 @@ int RASocket::handle_close(ACE_HANDLE /*handle*/, ACE_Reactor_Mask /*mask*/)
     return 0;
 }
 
-int RASocket::send(const std::string& line)
+int RASocket::send(std::string_view line)
 {
 #ifdef MSG_NOSIGNAL
     ssize_t n = peer().send(line.c_str(), line.length(), MSG_NOSIGNAL);
@@ -372,9 +372,9 @@ int RASocket::svc(void)
     return 0;
 }
 
-void RASocket::zprint(void* callbackArg, const char* szText)
+void RASocket::zprint(void* callbackArg, std::string_view szText)
 {
-    if (!szText || !callbackArg)
+    if (text.empty() || !callbackArg)
         return;
 
     RASocket* socket = static_cast<RASocket*>(callbackArg);

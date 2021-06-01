@@ -2757,7 +2757,7 @@ void World::UpdateSessions(uint32 diff)
 // This handles the issued and queued CLI commands
 void World::ProcessCliCommands()
 {
-    CliCommandHolder::Print* zprint = nullptr;
+    CliCommandHolder::Print zprint = nullptr;
     void* callbackArg = nullptr;
     CliCommandHolder* command = nullptr;
     while (cliCmdQueue.next(command))
@@ -3503,4 +3503,14 @@ bool World::IsPvPRealm() const
 bool World::IsFFAPvPRealm() const
 {
     return getIntConfig(CONFIG_GAME_TYPE) == REALM_TYPE_FFA_PVP;
+}
+
+CliCommandHolder::CliCommandHolder(void* callbackArg, char const* command, Print zprint, CommandFinished commandFinished)
+    : m_callbackArg(callbackArg), m_command(strdup(command)), m_print(zprint), m_commandFinished(commandFinished)
+{
+}
+
+CliCommandHolder::~CliCommandHolder()
+{
+    free(m_command);
 }
