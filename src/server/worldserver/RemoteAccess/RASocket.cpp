@@ -60,9 +60,9 @@ int RASocket::handle_close(ACE_HANDLE /*handle*/, ACE_Reactor_Mask /*mask*/)
 int RASocket::send(std::string_view line)
 {
 #ifdef MSG_NOSIGNAL
-    ssize_t n = peer().send(line.c_str(), line.length(), MSG_NOSIGNAL);
+    ssize_t n = peer().send(std::string(line).c_str(), line.length(), MSG_NOSIGNAL);
 #else
-    ssize_t n = peer().send(line.c_str(), line.length());
+    ssize_t n = peer().send(std::string(line).c_str(), line.length());
 #endif // MSG_NOSIGNAL
 
     return n == ssize_t(line.length()) ? 0 : -1;
@@ -374,14 +374,14 @@ int RASocket::svc(void)
 
 void RASocket::zprint(void* callbackArg, std::string_view szText)
 {
-    if (text.empty() || !callbackArg)
+    if (szText.empty() || !callbackArg)
         return;
 
     RASocket* socket = static_cast<RASocket*>(callbackArg);
-    size_t sz = strlen(szText);
+    size_t sz = strlen(std::string(szText).c_str());
 
     ACE_Message_Block* mb = new ACE_Message_Block(sz);
-    mb->copy(szText, sz);
+    mb->copy(std::string(szText).c_str(), sz);
 
     ACE_Time_Value tv = ACE_Time_Value::zero;
     if (socket->putq(mb, &tv) == -1)

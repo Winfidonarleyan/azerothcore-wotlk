@@ -83,20 +83,17 @@ int cli_hook_func()
 
 #endif
 
-void utf8print(void* /*arg*/, const char* str)
+void utf8print(void* /*arg*/, std::string_view str)
 {
 #if AC_PLATFORM == AC_PLATFORM_WINDOWS
-    wchar_t wtemp_buf[6000];
-    size_t wtemp_len = 6000 - 1;
-    if (!Utf8toWStr(str, strlen(str), wtemp_buf, wtemp_len))
+    std::wstring wbuf;
+    if (!Utf8toWStr(str, wbuf))
         return;
 
-    char temp_buf[6000];
-    CharToOemBuffW(&wtemp_buf[0], &temp_buf[0], wtemp_len + 1);
-    printf(temp_buf);
+    wprintf(L"%s", wbuf.c_str());
 #else
     {
-        printf("%s", str);
+        printf(STRING_VIEW_FMT, STRING_VIEW_FMT_ARG(str));
         fflush(stdout);
     }
 #endif
