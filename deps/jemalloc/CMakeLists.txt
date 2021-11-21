@@ -83,35 +83,27 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND NOT NOJEM)
     ${CMAKE_CURRENT_SOURCE_DIR}/src/witness.c
   )
 
-  add_library(jemalloc STATIC ${jemalloc_STAT_SRC})
+  target_link_libraries(deps
+    PUBLIC
+      ${jemalloc_STAT_SRC})
 
-  target_include_directories(jemalloc
-    PRIVATE
-      ${BUILDDIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-  target_compile_definitions(jemalloc
+  target_compile_definitions(deps
     PUBLIC
       -DNO_BUFFERPOOL
     PRIVATE
       -D_GNU_SOURCE
       -D_REENTRAN)
 
-  target_link_libraries(jemalloc
-    PRIVATE
-      acore-dependency-interface
+  target_link_libraries(deps
     PUBLIC
-      threads
-    ${CMAKE_DL_LIBS})
-
-  set_target_properties(jemalloc
-      PROPERTIES
-        FOLDER
-          "deps")
-
+      ${CMAKE_DL_LIBS})
 else()
   # Provide a dummy target for jemalloc which is used when jemalloc
   # is disabled or not supported.
   add_library(jemalloc INTERFACE)
+
+  target_link_libraries(deps
+    PUBLIC
+      jemalloc)
 
 endif()

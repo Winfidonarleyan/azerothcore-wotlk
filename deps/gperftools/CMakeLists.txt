@@ -10,8 +10,6 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
 
-add_library(gperftools INTERFACE)
-
-target_link_libraries(gperftools
+target_link_libraries(deps
   INTERFACE
     ${GPERFTOOLS_LIBRARIES})

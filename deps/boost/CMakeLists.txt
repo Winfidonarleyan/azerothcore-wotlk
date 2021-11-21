@@ -54,17 +54,15 @@ unset(CMAKE_REQUIRED_INCLUDES)
 unset(CMAKE_REQUIRED_LIBRARIES)
 unset(CMAKE_REQUIRED_FLAGS)
 
-add_library(boost INTERFACE)
-
-target_link_libraries(boost
+target_link_libraries(deps
   INTERFACE
     ${Boost_LIBRARIES})
 
-target_include_directories(boost
+target_include_directories(deps
   INTERFACE
     ${Boost_INCLUDE_DIRS})
 
-target_compile_definitions(boost
+target_compile_definitions(deps
   INTERFACE
     -DBOOST_DATE_TIME_NO_LIB
     -DBOOST_REGEX_NO_LIB
@@ -76,11 +74,11 @@ target_compile_definitions(boost
     -DBOOST_BIND_NO_PLACEHOLDERS)
 
 if (NOT boost_filesystem_copy_links_without_NO_SCOPED_ENUM)
-  target_compile_definitions(boost
+  target_compile_definitions(deps
     INTERFACE
       -DBOOST_NO_CXX11_SCOPED_ENUMS)
 endif()
 
-target_compile_definitions(boost
+target_compile_definitions(deps
   INTERFACE
     -DAC_HAS_BROKEN_WSTRING_REGEX)

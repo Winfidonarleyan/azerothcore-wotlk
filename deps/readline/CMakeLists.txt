@@ -34,7 +34,7 @@ if( UNIX )
       INTERFACE_INCLUDE_DIRECTORIES
         "${READLINE_INCLUDE_DIR}")
 
-else()
-  # Provide a dummy target
-  add_library(readline INTERFACE)
+  target_link_libraries(deps
+    PUBLIC
+      readline)
 endif()

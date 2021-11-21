@@ -10,7 +10,7 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
 
-if(UNIX)
+if (UNIX)
   # Look for an installed bzip2 on unix
   find_package(BZip2 REQUIRED)
 
@@ -22,25 +22,15 @@ if(UNIX)
         "${BZIP2_LIBRARIES}"
       INTERFACE_INCLUDE_DIRECTORIES
         "${BZIP2_INCLUDE_DIRS}")
+
+  target_link_libraries(deps
+    PUBLIC
+      bzip2)
 else()
   # Use the bundled source on windows
   file(GLOB sources *.c)
-  add_library(bzip2 STATIC
-    ${sources})
 
-  # Group sources
-  GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
-
-  target_include_directories(bzip2
+  target_link_libraries(deps
     PUBLIC
-      ${CMAKE_CURRENT_SOURCE_DIR})
-
-  target_link_libraries(bzip2
-    PRIVATE
-      acore-dependency-interface)
-
-  set_target_properties(bzip2
-    PROPERTIES
-      FOLDER
-        "deps")
+      ${sources})
 endif()

@@ -24,50 +24,8 @@ else()
   check_symbol_exists(strtod_l "${strtod_l_headers}" HAVE_STRTOD_L)
 endif()
 
-function(add_headers VAR)
-  set(headers ${${VAR}})
-  foreach (header ${ARGN})
-    set(headers ${headers} include/fmt/${header})
-  endforeach()
-  set(${VAR} ${headers} PARENT_SCOPE)
-endfunction()
-
-# Define the fmt library, its includes and the needed defines.
-add_headers(FMT_HEADERS
-  args.h
-  chrono.h
-  color.h
-  compile.h
-  core.h
-  format.h
-  format-inl.h
-  locale.h os.h
-  ostream.h
-  printf.h
-  ranges.h
-  xchar.h)
-
-set(FMT_SOURCES
-  src/format.cc
-  src/os.cc)
-
-add_library(fmt STATIC ${FMT_SOURCES} ${FMT_HEADERS})
-
 if (HAVE_STRTOD_L)
-  target_compile_definitions(fmt
+  target_compile_definitions(deps
     PUBLIC
       FMT_LOCALE)
 endif()
-
-target_include_directories(fmt
-  PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-target_link_libraries(fmt
-  PRIVATE
-    acore-dependency-interface)
-
-set_target_properties(fmt
-  PROPERTIES
-    FOLDER
-      "deps")

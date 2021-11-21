@@ -20,24 +20,10 @@ else()
     ${CMAKE_CURRENT_SOURCE_DIR}/argon2/ref.c)
 endif()
 
-add_library(argon2 STATIC
-  ${sources})
+target_link_libraries(deps
+  PUBLIC
+    ${sources})
 
-target_compile_definitions(argon2
+target_compile_definitions(deps
   PRIVATE
     -DARGON2_NO_THREADS)
-
-set_target_properties(argon2 PROPERTIES LINKER_LANGUAGE CXX)
-
-target_include_directories(argon2
-  PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR})
-
-target_link_libraries(argon2
-  PRIVATE
-    acore-dependency-interface)
-
-set_target_properties(argon2
-  PROPERTIES
-    FOLDER
-      "deps")

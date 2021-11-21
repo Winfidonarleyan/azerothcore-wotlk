@@ -22,3 +22,7 @@ set_target_properties(mysql
       "${MYSQL_LIBRARY}"
     INTERFACE_INCLUDE_DIRECTORIES
       "${MYSQL_INCLUDE_DIR}")
+
+target_link_libraries(deps
+  PUBLIC
+    mysql)

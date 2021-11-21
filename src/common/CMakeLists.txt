@@ -53,17 +53,7 @@ target_link_libraries(common
   PRIVATE
     acore-core-interface
   PUBLIC
-    boost
-    argon2
-    g3dlib
-    Detour
-    sfmt
-    utf8cpp
-    openssl
-    threads
-    jemalloc
-    stdfs
-    fmt)
+    deps)
 
 set_target_properties(common
   PROPERTIES
