@@ -150,10 +150,7 @@ bool AssistDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
             if (assistant && assistant->CanAssistTo(m_owner, victim))
             {
                 assistant->SetNoCallAssistance(true);
-                assistant->CombatStart(victim);
-                if (assistant->IsAIEnabled)
-                    assistant->AI()->AttackStart(victim);
-
+                assistant->EngageWithTarget(victim);
                 assistant->SetLastDamagedTimePtr(m_owner->GetLastDamagedTimePtr());
             }
         }
@@ -465,7 +462,7 @@ bool Creature::UpdateEntry(uint32 Entry, const CreatureData* data, bool changele
 
     // Xinef: NPC is in combat, keep this flag!
     unit_flags &= ~UNIT_FLAG_IN_COMBAT;
-    if (IsInCombat())
+    if (IsEngaged())
         unit_flags |= UNIT_FLAG_IN_COMBAT;
 
     SetUInt32Value(UNIT_FIELD_FLAGS, unit_flags);
@@ -715,7 +712,7 @@ void Creature::Update(uint32 diff)
                     if (!IsInEvadeMode())
                     {
                         // regenerate health if not in combat or if polymorphed)
-                        if (!IsInCombat() || IsPolymorphed())
+                        if (!IsEngaged() || IsPolymorphed())
                             RegenerateHealth();
                         else if (IsNotReachableAndNeedRegen())
                         {
@@ -826,7 +823,7 @@ void Creature::Regenerate(Powers power)
         case POWER_MANA:
             {
                 // Combat and any controlled creature
-                if (IsInCombat() || GetCharmerOrOwnerGUID())
+                if (IsEngaged() || GetCharmerOrOwnerGUID())
                 {
                     if (GetEntry() == NPC_IMP || GetEntry() == NPC_WATER_ELEMENTAL_TEMP || GetEntry() == NPC_WATER_ELEMENTAL_PERM)
                     {
@@ -1764,7 +1761,7 @@ bool Creature::CanStartAttack(Unit const* who) const
     // pussywizard: at this point we are either hostile to who or friendly to who->getAttackerForHelper()
     // pussywizard: if who is in combat and has an attacker, help him if the distance is right (help because who is hostile or help because attacker is friendly)
     bool assist = false;
-    if (who->IsInCombat() && IsWithinDist(who, ATTACK_DISTANCE))
+    if (who->IsEngaged() && IsWithinDist(who, ATTACK_DISTANCE))
         if (Unit* victim = who->getAttackerForHelper())
             if (IsWithinDistInMap(victim, sWorld->getFloatConfig(CONFIG_CREATURE_FAMILY_ASSISTANCE_RADIUS)))
                 assist = true;
@@ -2283,7 +2280,7 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
         return false;
 
     // skip fighting creature
-    if (IsInCombat())
+    if (IsEngaged())
         return false;
 
     // only free creature
@@ -3470,7 +3467,7 @@ void Creature::SetLastDamagedTimePtr(std::shared_ptr<time_t> const& val)
 
 bool Creature::CanPeriodicallyCallForAssistance() const
 {
-    if (!IsInCombat())
+    if (!IsEngaged())
         return false;
 
     if (HasUnitState(UNIT_STATE_DIED | UNIT_STATE_POSSESSED))

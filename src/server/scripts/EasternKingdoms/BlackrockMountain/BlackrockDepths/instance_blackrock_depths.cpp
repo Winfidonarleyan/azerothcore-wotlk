@@ -608,7 +608,7 @@ public:
                         {
                             if (Creature* argelmachAdd = instance->GetCreature(argelmachAddGUID))
                             {
-                                if (!argelmachAdd->IsInCombat())
+                                if (!argelmachAdd->IsEngaged())
                                 {
                                     argelmachAdd->RemoveAurasDueToSpell(SPELL_STONED);
                                     argelmachAdd->AI()->AttackStart(argelmach->GetVictim());
@@ -808,7 +808,7 @@ public:
                 if (boss)
                 {
                     anyBossAlive |= boss->IsAlive();
-                    if (boss->IsAlive() && boss->IsInCombat())
+                    if (boss->IsAlive() && boss->IsEngaged())
                     {
                         tombResetTimer = TIMER_TOMB_RESET;
                         return false;  // any boss in combat means we shouldn't reset.

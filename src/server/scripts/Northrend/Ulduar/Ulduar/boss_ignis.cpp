@@ -320,7 +320,7 @@ public:
             std::list<Creature*> icl;
             me->GetCreaturesWithEntryInRange(icl, 300.0f, NPC_IRON_CONSTRUCT);
             for( std::list<Creature*>::iterator itr = icl.begin(); itr != icl.end(); ++itr )
-                if ((*itr)->IsAlive() && (*itr)->IsInCombat())
+                if ((*itr)->IsAlive() && (*itr)->IsEngaged())
                     Unit::Kill(*itr, *itr);
         }
 

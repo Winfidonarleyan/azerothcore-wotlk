@@ -596,7 +596,7 @@ void Pet::LoseHappiness()
     if (curValue <= 0)
         return;
     int32 addvalue = 670;                                   //value is 70/35/17/8/4 (per min) * 1000 / 8 (timer 7.5 secs)
-    if (IsInCombat())                                        //we know in combat happiness fades faster, multiplier guess
+    if (IsEngaged())                                        //we know in combat happiness fades faster, multiplier guess
         addvalue = int32(addvalue * 1.5f);
     ModifyPower(POWER_HAPPINESS, -addvalue);
 }

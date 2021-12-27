@@ -1724,7 +1724,7 @@ void Player::RegenerateAll()
             {
                 SetRuneCooldown(i, (cd > m_regenTimer) ? cd - m_regenTimer : 0);
                 // start grace counter, player must be in combat and rune has to go off cooldown
-                if (IsInCombat() && cd <= m_regenTimer)
+                if (IsEngaged() && cd <= m_regenTimer)
                     SetGracePeriod(i, m_regenTimer - cd + 1); // added 1 because m_regenTimer-cd can be equal 0
             }
             // xinef: if grace is started, increase it but no more than cap
@@ -1738,7 +1738,7 @@ void Player::RegenerateAll()
     if (m_regenTimerCount >= 2000)
     {
         // Not in combat or they have regeneration
-        if (!IsInCombat() || IsPolymorphed() || m_baseHealthRegen ||
+        if (!IsEngaged() || IsPolymorphed() || m_baseHealthRegen ||
                 HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT) ||
                 HasAuraType(SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT))
         {
@@ -1834,7 +1834,7 @@ void Player::Regenerate(Powers power)
             break;
         case POWER_RAGE:                                    // Regenerate rage
             {
-                if (!IsInCombat() && !HasAuraType(SPELL_AURA_INTERRUPT_REGEN))
+                if (!IsEngaged() && !HasAuraType(SPELL_AURA_INTERRUPT_REGEN))
                 {
                     float RageDecreaseRate = sWorld->getRate(RATE_POWER_RAGE_LOSS);
                     addvalue += -20 * RageDecreaseRate;               // 2 rage by tick (= 2 seconds => 1 rage/sec)
@@ -1846,7 +1846,7 @@ void Player::Regenerate(Powers power)
             break;
         case POWER_RUNIC_POWER:
             {
-                if (!IsInCombat() && !HasAuraType(SPELL_AURA_INTERRUPT_REGEN))
+                if (!IsEngaged() && !HasAuraType(SPELL_AURA_INTERRUPT_REGEN))
                 {
                     float RunicPowerDecreaseRate = sWorld->getRate(RATE_POWER_RUNICPOWER_LOSS);
                     addvalue += -30 * RunicPowerDecreaseRate;         // 3 RunicPower by tick
@@ -1872,7 +1872,7 @@ void Player::Regenerate(Powers power)
                 AddPct(addvalue, (*i)->GetAmount());
 
         // Butchery requires combat for this effect
-        if (power != POWER_RUNIC_POWER || IsInCombat())
+        if (power != POWER_RUNIC_POWER || IsEngaged())
             addvalue += float(GetTotalAuraModifierByMiscValue(SPELL_AURA_MOD_POWER_REGEN, power) * ((power != POWER_ENERGY) ? m_regenTimerCount : m_regenTimer)) / (5.0f * IN_MILLISECONDS);
     }
 
@@ -1942,10 +1942,10 @@ void Player::RegenerateHealth()
     if (IsPolymorphed())
         addvalue = (float)GetMaxHealth() / 3;
     // normal regen case (maybe partly in combat case)
-    else if (!IsInCombat() || HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT))
+    else if (!IsEngaged() || HasAuraType(SPELL_AURA_MOD_REGEN_DURING_COMBAT))
     {
         addvalue = OCTRegenHPPerSpirit() * HealthIncreaseRate;
-        if (!IsInCombat())
+        if (!IsEngaged())
         {
             AuraEffectList const& mModHealthRegenPct = GetAuraEffectsByType(SPELL_AURA_MOD_HEALTH_REGEN_PERCENT);
             for (AuraEffectList::const_iterator i = mModHealthRegenPct.begin(); i != mModHealthRegenPct.end(); ++i)
@@ -9538,7 +9538,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
         return false;
 
     // not let cheating with start flight in time of logout process || while in combat || has type state: stunned || has type state: root
-    if (GetSession()->isLogingOut() || IsInCombat() || HasUnitState(UNIT_STATE_STUNNED) || HasUnitState(UNIT_STATE_ROOT))
+    if (GetSession()->isLogingOut() || IsEngaged() || HasUnitState(UNIT_STATE_STUNNED) || HasUnitState(UNIT_STATE_ROOT))
     {
         GetSession()->SendActivateTaxiReply(ERR_TAXIPLAYERBUSY);
         return false;
@@ -12246,7 +12246,7 @@ PartyResult Player::CanUninviteFromGroup(ObjectGuid targetPlayerGUID) const
 
         // TODO: Should also be sent when anyone has recently left combat, with an aprox ~5 seconds timer.
         for (GroupReference const* itr = grp->GetFirstMember(); itr != nullptr; itr = itr->next())
-            if (itr->GetSource() && itr->GetSource()->IsInMap(this) && itr->GetSource()->IsInCombat())
+            if (itr->GetSource() && itr->GetSource()->IsInMap(this) && itr->GetSource()->IsEngaged())
                 return ERR_PARTY_LFG_BOOT_IN_COMBAT;
 
         if (Player* target = ObjectAccessor::FindConnectedPlayer(targetPlayerGUID))

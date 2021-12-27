@@ -802,7 +802,7 @@ void WorldSession::HandleMoveWaterWalkAck(WorldPacket& recvData)
 
 void WorldSession::HandleSummonResponseOpcode(WorldPacket& recvData)
 {
-    if (!_player->IsAlive() || _player->IsInCombat())
+    if (!_player->IsAlive() || _player->IsEngaged())
         return;
 
     ObjectGuid summoner_guid;

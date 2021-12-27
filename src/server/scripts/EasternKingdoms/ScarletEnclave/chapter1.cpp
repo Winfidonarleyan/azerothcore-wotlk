@@ -192,7 +192,7 @@ public:
         {
             CloseGossipMenuFor(player);
 
-            if (player->IsInCombat() || creature->IsInCombat())
+            if (player->IsEngaged() || creature->IsEngaged())
                 return true;
 
             if (creature->AI()->GetData(DATA_IN_PROGRESS))
@@ -214,7 +214,7 @@ public:
             if (player->HealthBelowPct(10))
                 return true;
 
-            if (player->IsInCombat() || creature->IsInCombat())
+            if (player->IsEngaged() || creature->IsEngaged())
                 return true;
 
             if (!creature->AI()->GetGUID(player->GetGUID().GetCounter()))
@@ -476,7 +476,7 @@ public:
 
         void OwnerAttackedBy(Unit* attacker) override
         {
-            if (!me->IsInCombat() && me->GetReactState() == REACT_DEFENSIVE)
+            if (!me->IsEngaged() && me->GetReactState() == REACT_DEFENSIVE)
                 AttackStart(attacker);
         }
 
@@ -517,7 +517,7 @@ public:
                     events.ScheduleEvent(EVENT_GHOUL_CHECK_COMBAT, 1000);
                     return;
                 case EVENT_GHOUL_CHECK_COMBAT:
-                    if (!me->IsInCombat())
+                    if (!me->IsEngaged())
                         if (Player* owner = me->GetCharmerOrOwnerPlayerOrPlayerItself())
                             if (owner->GetVictim())
                                 AttackStart(owner->GetVictim());

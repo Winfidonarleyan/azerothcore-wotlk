@@ -751,7 +751,7 @@ public:
                             events.RescheduleEvent(EVENT_START_ATTACK, 1000);
                         EntryCheckPredicate pred(NPC_STRANGULATE_VEHICLE);
                         summons.DoAction(ACTION_TELEPORT_BACK, pred);
-                        if (!IsHeroic() && _phase != PHASE_OUTRO && me->IsInCombat() && _lastTalkTimeBuff + 5 <= time(nullptr))
+                        if (!IsHeroic() && _phase != PHASE_OUTRO && me->IsEngaged() && _lastTalkTimeBuff + 5 <= time(nullptr))
                             Talk(SAY_LK_FROSTMOURNE_ESCAPE);
                     }
                     break;
@@ -906,7 +906,7 @@ public:
 
         void SpellHit(Unit* /*caster*/, SpellInfo const* spell) override
         {
-            if (spell->Id == HARVESTED_SOUL_BUFF && me->IsInCombat() && !IsHeroic() && _phase != PHASE_OUTRO && _lastTalkTimeBuff + 5 <= time(nullptr))
+            if (spell->Id == HARVESTED_SOUL_BUFF && me->IsEngaged() && !IsHeroic() && _phase != PHASE_OUTRO && _lastTalkTimeBuff + 5 <= time(nullptr))
             {
                 _lastTalkTimeBuff = time(nullptr);
                 Talk(SAY_LK_FROSTMOURNE_KILL);
@@ -1458,7 +1458,7 @@ public:
                         theLichKing->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                         theLichKing->SetReactState(REACT_AGGRESSIVE);
                         theLichKing->SetInCombatWithZone();
-                        if (!theLichKing->IsInCombat())
+                        if (!theLichKing->IsEngaged())
                             theLichKing->AI()->EnterEvadeMode();
                     }
                     break;

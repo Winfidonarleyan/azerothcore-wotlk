@@ -453,7 +453,7 @@ public:
         {
             summons.Summon(cr);
 
-            if (me->IsInCombat() && cr->GetEntry() != NPC_HIGHLORD_TIRION_FORDRING && battleStarted == ENCOUNTER_STATE_FIGHT)
+            if (me->IsEngaged() && cr->GetEntry() != NPC_HIGHLORD_TIRION_FORDRING && battleStarted == ENCOUNTER_STATE_FIGHT)
             {
                 Position pos = LightOfDawnFightPos[urand(0, 9)];
                 if (Unit* target = cr->SelectNearbyTarget(nullptr, 10.0f))

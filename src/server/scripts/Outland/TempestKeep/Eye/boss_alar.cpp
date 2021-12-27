@@ -173,7 +173,7 @@ public:
         {
             if (type != POINT_MOTION_TYPE)
             {
-                if (type == ESCORT_MOTION_TYPE && me->movespline->Finalized() && !me->IsInCombat())
+                if (type == ESCORT_MOTION_TYPE && me->movespline->Finalized() && !me->IsEngaged())
                     startPath = true;
                 return;
             }

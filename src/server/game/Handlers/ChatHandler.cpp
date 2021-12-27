@@ -607,7 +607,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
             break;
         case CHAT_MSG_AFK:
             {
-                if (!sender->IsInCombat())
+                if (!sender->IsEngaged())
                 {
                     if (sender->isAFK())                       // Already AFK
                     {

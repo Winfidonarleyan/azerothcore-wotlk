@@ -170,7 +170,7 @@ public:
         {
             if (Creature* pMarzon = ObjectAccessor::GetCreature(*me, MarzonGUID))
             {
-                if (pMarzon->IsAlive() && !pMarzon->IsInCombat())
+                if (pMarzon->IsAlive() && !pMarzon->IsEngaged())
                     pMarzon->AI()->AttackStart(who);
             }
         }
@@ -311,7 +311,7 @@ public:
             {
                 if (Unit* summoner = me->ToTempSummon()->GetSummonerUnit())
                 {
-                    if (summoner->GetTypeId() == TYPEID_UNIT && summoner->IsAlive() && !summoner->IsInCombat())
+                    if (summoner->GetTypeId() == TYPEID_UNIT && summoner->IsAlive() && !summoner->IsEngaged())
                         summoner->ToCreature()->AI()->AttackStart(who);
                 }
             }

@@ -783,7 +783,7 @@ public:
             if (GetTargetApplication()->GetRemoveMode() == AURA_REMOVE_BY_EXPIRE)
                 if (InstanceScript* instance = target->GetInstanceScript())
                     if (Creature* bloodQueen = ObjectAccessor::GetCreature(*target, instance->GetGuidData(DATA_BLOOD_QUEEN_LANA_THEL)))
-                        if (bloodQueen->IsAlive() && bloodQueen->IsInCombat())
+                        if (bloodQueen->IsAlive() && bloodQueen->IsEngaged())
                         {
                             // this needs to be done BEFORE charm aura or we hit an assert in Unit::SetCharmedBy
                             if (target->GetVehicleKit())

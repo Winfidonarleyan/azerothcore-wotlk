@@ -47,10 +47,7 @@ void FollowerAI::AttackStart(Unit* who)
 
     if (me->Attack(who, true))
     {
-        // This is done in Unit::Attack function which wont bug npcs by not adding threat upon combat start...
-        //me->AddThreat(who, 0.0f);
-        //me->SetInCombatWith(who);
-        //who->SetInCombatWith(me);
+        me->EngageWithTarget(who); // in case it doesn't have threat+combat yet
 
         if (me->HasUnitState(UNIT_STATE_FOLLOW))
             me->ClearUnitState(UNIT_STATE_FOLLOW);

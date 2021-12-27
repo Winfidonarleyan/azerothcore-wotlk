@@ -127,7 +127,7 @@ public:
         {
             BossAI::EnterCombat(who);
             if (Creature* alythess = ObjectAccessor::GetCreature(*me, instance->GetGuidData(NPC_GRAND_WARLOCK_ALYTHESS)))
-                if (alythess->IsAlive() && !alythess->IsInCombat())
+                if (alythess->IsAlive() && !alythess->IsEngaged())
                     alythess->AI()->AttackStart(who);
 
             events.ScheduleEvent(EVENT_SPELL_SHADOW_BLADES, 10000);
@@ -275,7 +275,7 @@ public:
         {
             BossAI::EnterCombat(who);
             if (Creature* scorlash = ObjectAccessor::GetCreature(*me, instance->GetGuidData(NPC_LADY_SACROLASH)))
-                if (scorlash->IsAlive() && !scorlash->IsInCombat())
+                if (scorlash->IsAlive() && !scorlash->IsEngaged())
                     scorlash->AI()->AttackStart(who);
 
             events.ScheduleEvent(EVENT_SPELL_BLAZE, 100);

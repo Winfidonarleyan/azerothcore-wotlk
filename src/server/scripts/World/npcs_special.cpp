@@ -1276,7 +1276,7 @@ public:
             if (spell->Id == SPELL_LESSER_HEAL_R2 || spell->Id == SPELL_FORTITUDE_R1)
             {
                 //not while in combat
-                if (me->IsInCombat())
+                if (me->IsEngaged())
                     return;
 
                 //nothing to be done now
@@ -1387,7 +1387,7 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (CanRun && !me->IsInCombat())
+            if (CanRun && !me->IsEngaged())
             {
                 if (RunAwayTimer <= diff)
                 {

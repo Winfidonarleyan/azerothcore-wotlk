@@ -573,7 +573,7 @@ public:
                 case EVENT_MINION_CHECK_DISTANCE:
                     if (Creature* cr = ObjectAccessor::GetCreature(*me, myCoil))
                     {
-                        if (!me->GetHomePosition().IsInDist(me, 28) && me->IsInCombat())
+                        if (!me->GetHomePosition().IsInDist(me, 28) && me->IsEngaged())
                         {
                             if (!overload)
                             {

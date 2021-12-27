@@ -128,7 +128,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
         return;
     }
 
-    if (pUser->IsInCombat())
+    if (pUser->IsEngaged())
     {
         for (int i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
         {

@@ -290,7 +290,7 @@ public:
                 me->SetFacingTo(1.6f);
                 return;
             }
-            else if (type == ESCORT_MOTION_TYPE && me->movespline->Finalized() && !me->IsInCombat())
+            else if (type == ESCORT_MOTION_TYPE && me->movespline->Finalized() && !me->IsEngaged())
             {
                 startPath = true;
                 return;
@@ -616,7 +616,7 @@ public:
             return true;
 
         Creature* razorscale = ObjectAccessor::GetCreature(*creature, instance->GetGuidData(TYPE_RAZORSCALE));
-        if (!razorscale || razorscale->IsInCombat())
+        if (!razorscale || razorscale->IsEngaged())
             return true;
 
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, TEXT_GOSSIP_ACTION, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
@@ -636,7 +636,7 @@ public:
                 return true;
 
             Creature* razorscale = ObjectAccessor::GetCreature(*creature, instance->GetGuidData(TYPE_RAZORSCALE));
-            if (razorscale && !razorscale->IsInCombat())
+            if (razorscale && !razorscale->IsEngaged())
             {
                 // reset npcs NPC_HARPOON_FIRE_STATE
                 for (uint8 i = 0; i < 4; ++i)
@@ -865,7 +865,7 @@ public:
                         if( ObjectGuid rsGUID = pInstance->GetGuidData(TYPE_RAZORSCALE) )
                             razorscale = ObjectAccessor::GetCreature(*me, rsGUID);
 
-                        if( !razorscale || !razorscale->IsInCombat() )
+                        if( !razorscale || !razorscale->IsEngaged() )
                         {
                             Reset();
                             me->GetMotionMaster()->MoveTargetedHome();
@@ -914,7 +914,7 @@ public:
         if( ObjectGuid rsGUID = pInstance->GetGuidData(TYPE_RAZORSCALE) )
             rs = ObjectAccessor::GetCreature(*go, rsGUID);
 
-        if( !rs || !rs->IsInCombat() )
+        if( !rs || !rs->IsEngaged() )
         {
             go->SetRespawnTime(0);
             go->Delete();

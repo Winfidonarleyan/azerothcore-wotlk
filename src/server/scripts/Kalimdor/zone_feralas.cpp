@@ -117,7 +117,7 @@ public:
         {
             if (!_playerGUID || target->GetEntry() != NPC_ROCKBITER || !me->IsInRange(target, 0.f, 10.f))
             {
-                if (!me->IsInCombat() && !me->GetVictim())
+                if (!me->IsEngaged() && !me->GetVictim())
                 {
                     if (Player* player = ObjectAccessor::GetPlayer(*me, _playerGUID))
                     {

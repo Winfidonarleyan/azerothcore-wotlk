@@ -25,7 +25,7 @@ NullCreatureAI::NullCreatureAI(Creature* c) : CreatureAI(c) { me->SetReactState(
 
 void PassiveAI::UpdateAI(uint32)
 {
-    if (me->IsInCombat() && me->getAttackers().empty())
+    if (me->IsEngaged() && me->getAttackers().empty())
         EnterEvadeMode();
 }
 
@@ -76,7 +76,7 @@ void CritterAI::EnterEvadeMode()
 
 void CritterAI::UpdateAI(uint32 diff)
 {
-    if (me->IsInCombat())
+    if (me->IsEngaged())
     {
         _combatTimer += diff;
         if (_combatTimer >= 5000)

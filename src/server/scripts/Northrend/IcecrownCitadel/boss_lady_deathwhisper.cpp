@@ -551,7 +551,7 @@ public:
             if (action != ACTION_START_INTRO)
                 return;
 
-            if (!_introDone && !me->IsInCombat())
+            if (!_introDone && !me->IsEngaged())
             {
                 _introDone = true;
                 Talk(SAY_INTRO_1);

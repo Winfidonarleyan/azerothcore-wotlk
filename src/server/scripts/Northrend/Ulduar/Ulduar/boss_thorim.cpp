@@ -1148,7 +1148,7 @@ public:
                 if (me->GetInstanceScript())
                     if (Creature* thorim = ObjectAccessor::GetCreature(*me, me->GetInstanceScript()->GetGuidData(TYPE_THORIM)))
                     {
-                        if (!thorim->IsInCombat())
+                        if (!thorim->IsEngaged())
                         {
                             thorim->SetInCombatWithZone();
                             thorim->AI()->AttackStart(who);

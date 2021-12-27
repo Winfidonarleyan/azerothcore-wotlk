@@ -1019,7 +1019,7 @@ public:
                         break;
                     case EVENT_ACTION_PHASE3+9:
                         // Arthas is fighting infinites in town hall
-                        if (me->IsInCombat())
+                        if (me->IsEngaged())
                         {
                             actionEvents.RepeatEvent(1000);
                             return;
@@ -1041,7 +1041,7 @@ public:
                         break;
                     case EVENT_ACTION_PHASE3+12:
                         // Arthas is fighting first chronos
-                        if (me->IsInCombat())
+                        if (me->IsEngaged())
                         {
                             actionEvents.RepeatEvent(1000);
                             return;
@@ -1055,7 +1055,7 @@ public:
                         break;
                     case EVENT_ACTION_PHASE3+13:
                         // Arthas is fighting second chronos
-                        if (me->IsInCombat())
+                        if (me->IsEngaged())
                         {
                             actionEvents.RepeatEvent(1000);
                             return;
@@ -1069,7 +1069,7 @@ public:
                         break;
                     case EVENT_ACTION_PHASE3+14:
                         // Arthas is fighting third chronos
-                        if (me->IsInCombat())
+                        if (me->IsEngaged())
                         {
                             actionEvents.RepeatEvent(1000);
                             return;
@@ -1114,7 +1114,7 @@ public:
                         break;
                     case EVENT_ACTION_PHASE3+19:
                         // Arthas is fighting epoch chronos
-                        if (me->IsInCombat())
+                        if (me->IsEngaged())
                         {
                             actionEvents.RepeatEvent(1000);
                             return;

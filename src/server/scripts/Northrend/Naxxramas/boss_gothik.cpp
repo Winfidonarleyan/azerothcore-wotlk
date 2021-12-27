@@ -576,7 +576,7 @@ public:
                 damage = 0;
             }
 
-            if (!me->IsInCombat())
+            if (!me->IsEngaged())
             {
                 me->CallForHelp(25.0f);
                 AttackStart(attacker);

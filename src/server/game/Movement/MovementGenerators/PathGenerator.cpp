@@ -705,7 +705,7 @@ void PathGenerator::UpdateFilter()
         }
 
         /*if (Creature const* _sourceCreature = _source->ToCreature())
-            if (_sourceCreature->IsInCombat() || _sourceCreature->IsInEvadeMode())
+            if (_sourceCreature->IsEngaged() || _sourceCreature->IsInEvadeMode())
                 _filter.setIncludeFlags(_filter.getIncludeFlags() | NAV_GROUND_STEEP);*/
     }
 }

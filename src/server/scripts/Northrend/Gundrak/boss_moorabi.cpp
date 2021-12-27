@@ -121,7 +121,7 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (!me->IsInCombat())
+            if (!me->IsEngaged())
             {
                 events2.Update(diff);
                 if (events2.ExecuteEvent() == EVENT_PHANTOM)

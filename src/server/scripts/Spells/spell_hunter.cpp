@@ -897,7 +897,7 @@ class spell_hun_disengage : public SpellScript
     SpellCastResult CheckCast()
     {
         Unit* caster = GetCaster();
-        if (caster->GetTypeId() == TYPEID_PLAYER && !caster->IsInCombat())
+        if (caster->GetTypeId() == TYPEID_PLAYER && !caster->IsEngaged())
             return SPELL_FAILED_CANT_DO_THAT_RIGHT_NOW;
 
         return SPELL_CAST_OK;

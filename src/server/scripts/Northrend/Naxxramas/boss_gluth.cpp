@@ -153,7 +153,7 @@ public:
 
         bool SelectPlayerInRoom()
         {
-            if (me->IsInCombat())
+            if (me->IsEngaged())
                 return false;
 
             Map::PlayerList const& pList = me->GetMap()->GetPlayers();

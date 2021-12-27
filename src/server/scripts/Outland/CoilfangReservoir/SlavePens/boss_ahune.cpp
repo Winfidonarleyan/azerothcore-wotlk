@@ -177,7 +177,7 @@ public:
                     if (Player* plr = ObjectAccessor::GetPlayer(*me, InvokerGUID))
                         AttackStart(plr);
                     me->SetInCombatWithZone();
-                    if (!me->IsInCombat())
+                    if (!me->IsEngaged())
                     {
                         EnterEvadeMode();
                         return;

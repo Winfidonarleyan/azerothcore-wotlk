@@ -549,7 +549,7 @@ public:
             events.Update(diff);
 
             // Event for draining the tree
-            if (!me->IsInCombat())
+            if (!me->IsEngaged())
             {
                 // Do not let the raid skip straight to Archimonde. Visible and hostile ONLY if Azagalor is finished.
                 if ((instance->GetData(DATA_AZGALOREVENT) < DONE) && (me->IsVisible() || (me->GetFaction() != FACTION_FRIENDLY)))

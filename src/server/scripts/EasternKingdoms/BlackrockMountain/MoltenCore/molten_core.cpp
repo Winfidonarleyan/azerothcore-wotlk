@@ -156,7 +156,7 @@ public:
             creatureTarget->SetControlled(false, UNIT_STATE_ROOT);
             creatureTarget->SetReactState(REACT_AGGRESSIVE);
 
-            if (!creatureTarget->IsInCombat())
+            if (!creatureTarget->IsEngaged())
             {
                 return;
             }
@@ -171,7 +171,7 @@ public:
                 // Alive hound been found within 80 yards -> cancel suicide
                 if (std::find_if(hounds.begin(), hounds.end(), [creatureTarget](Creature const* hound)
                 {
-                    return creatureTarget != hound && creatureTarget->IsWithinLOSInMap(hound) && hound->IsAlive() && hound->IsInCombat() && !hound->HasAura(SPELL_PLAY_DEAD);
+                    return creatureTarget != hound && creatureTarget->IsWithinLOSInMap(hound) && hound->IsAlive() && hound->IsEngaged() && !hound->HasAura(SPELL_PLAY_DEAD);
                 }) != hounds.end())
                 {
                     shouldDie = false;

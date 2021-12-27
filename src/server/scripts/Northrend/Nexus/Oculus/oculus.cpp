@@ -515,7 +515,7 @@ public:
             if (attacker)
             {
                 Unit* player = attacker->GetCharmer();
-                if (player && !player->IsInCombat())
+                if (player && !player->IsEngaged())
                     player->SetInCombatWith(me);
             }
         }

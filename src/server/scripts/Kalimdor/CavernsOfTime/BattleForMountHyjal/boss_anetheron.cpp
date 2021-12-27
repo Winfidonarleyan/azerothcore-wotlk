@@ -223,7 +223,7 @@ public:
         void MoveInLineOfSight(Unit* who) override
 
         {
-            if (me->IsWithinDist(who, 50) && !me->IsInCombat() && me->IsValidAttackTarget(who))
+            if (me->IsWithinDist(who, 50) && !me->IsEngaged() && me->IsValidAttackTarget(who))
             {
                 AttackStart(who);
             }

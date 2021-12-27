@@ -355,7 +355,7 @@ public:
 
         void JustSummoned(Creature* summon) override
         {
-            if (summon->GetEntry() != 38308 && summon->GetEntry() != 38309 && (!me->IsInCombat() || me->IsInEvadeMode()))
+            if (summon->GetEntry() != 38308 && summon->GetEntry() != 38309 && (!me->IsEngaged() || me->IsInEvadeMode()))
             {
                 summon->DespawnOrUnsummon(1);
                 return;
@@ -391,7 +391,7 @@ public:
                     return;
             }
 
-            if (me->IsInCombat())
+            if (me->IsEngaged())
                 summon->SetInCombatWithZone();
         }
 
@@ -428,7 +428,7 @@ public:
                 case POINT_FESTERGUT:
                     if (Creature* c = instance->instance->GetCreature(instance->GetGuidData(DATA_FESTERGUT)))
                     {
-                        if (c->IsInCombat())
+                        if (c->IsEngaged())
                         {
                             instance->SetBossState(DATA_FESTERGUT, IN_PROGRESS);
                             me->SetFacingTo(festergutWatchPos.GetOrientation());
@@ -444,7 +444,7 @@ public:
                 case POINT_ROTFACE:
                     if (Creature* c = instance->instance->GetCreature(instance->GetGuidData(DATA_ROTFACE)))
                     {
-                        if (c->IsInCombat())
+                        if (c->IsEngaged())
                         {
                             instance->SetBossState(DATA_ROTFACE, IN_PROGRESS);
                             me->SetFacingTo(rotfaceWatchPos.GetOrientation());
@@ -668,7 +668,7 @@ public:
         void EnterEvadeMode() override
         {
             Position p = me->GetHomePosition();
-            if (!me->IsInCombat() && me->GetExactDist2d(&p) > 10.0f)
+            if (!me->IsEngaged() && me->GetExactDist2d(&p) > 10.0f)
                 me->GetMotionMaster()->MoveCharge(tablePos.GetPositionX(), tablePos.GetPositionY(), tablePos.GetPositionZ(), 15.0f, POINT_TABLE);
             BossAI::EnterEvadeMode();
         }
@@ -761,7 +761,7 @@ public:
         if (InstanceScript* instance = me->GetInstanceScript())
             if (Creature* professor = ObjectAccessor::GetCreature(*me, instance->GetGuidData(DATA_PROFESSOR_PUTRICIDE)))
             {
-                if (!professor->IsInCombat())
+                if (!professor->IsEngaged())
                     me->DespawnOrUnsummon(1);
                 else
                     professor->AI()->JustSummoned(me);
@@ -1533,7 +1533,7 @@ public:
                 return;
             }
 
-            if (!putricide->IsInCombat())
+            if (!putricide->IsEngaged())
                 putricide->SetInCombatWithZone();
 
             uint32 entry = uint32(GetSpellInfo()->Effects[effIndex].MiscValue);

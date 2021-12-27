@@ -102,7 +102,7 @@ public:
 
         void JustSummoned(Creature* summon) override
         {
-            if (me->IsInCombat() && summon->GetEntry() == NPC_BEACON)
+            if (me->IsEngaged() && summon->GetEntry() == NPC_BEACON)
             {
                 summon->CastSpell(summon, SPELL_ETHEREAL_BEACON_VISUAL, false);
                 if (Unit* target = SelectTargetFromPlayerList(50.0f))

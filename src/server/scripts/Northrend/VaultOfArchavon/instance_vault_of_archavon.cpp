@@ -58,7 +58,7 @@ public:
             {
                 for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
                     if (Creature* cr = instance->GetCreature(bossGUIDs[i]))
-                        if (!cr->IsInCombat())
+                        if (!cr->IsEngaged())
                             cr->RemoveAllAuras();
 
                 stoned = false;
@@ -87,7 +87,7 @@ public:
                         {
                             for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
                                 if (Creature* cr = instance->GetCreature(bossGUIDs[i]))
-                                    if (!cr->IsInCombat())
+                                    if (!cr->IsEngaged())
                                     {
                                         cr->RemoveAllAuras();
                                         if (Aura* aur = cr->AddAura(SPELL_STONED_AURA, cr))
@@ -111,7 +111,7 @@ public:
                         {
                             for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
                                 if (Creature* cr = instance->GetCreature(bossGUIDs[i]))
-                                    if (cr->IsInCombat() && cr->AI())
+                                    if (cr->IsEngaged() && cr->AI())
                                         cr->AI()->EnterEvadeMode();
 
                             Map::PlayerList const& PlayerList = instance->GetPlayers();

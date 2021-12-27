@@ -200,7 +200,7 @@ public:
             // Leviathan does not use IN_PROGRESS type, instead SPECIAL is set and never reset,
             // Check if he is in combat.
             if (Unit* l = instance->GetCreature(m_uiLeviathanGUID))
-                if (l->IsInCombat())
+                if (l->IsEngaged())
                     return true;
 
             return false;
@@ -1029,7 +1029,7 @@ public:
                     if (i == TYPE_LEVIATHAN)
                     {
                         if (Creature* c = instance->GetCreature(m_uiLeviathanGUID))
-                            if (c->IsInCombat())
+                            if (c->IsEngaged())
                                 go = true;
                     }
                     else

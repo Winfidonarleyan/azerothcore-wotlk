@@ -252,7 +252,7 @@ void PetAI::UpdateAI(uint32 diff)
                 if (spellInfo->CanBeUsedInCombat())
                 {
                     // Check if we're in combat or commanded to attack (exlude auras with infinity duration)
-                    if (!me->IsInCombat() && !me->GetCharmInfo()->IsCommandAttack() && spellInfo->GetMaxDuration() != -1)
+                    if (!me->IsEngaged() && !me->GetCharmInfo()->IsCommandAttack() && spellInfo->GetMaxDuration() != -1)
                         continue;
                 }
 

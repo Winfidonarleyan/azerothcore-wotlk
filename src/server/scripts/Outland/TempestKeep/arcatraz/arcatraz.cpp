@@ -179,7 +179,7 @@ public:
                     events2.ScheduleEvent(EVENT_SEARCH_FIGHT, 1000);
                     break;
                 case EVENT_SEARCH_FIGHT:
-                    if (!me->IsInCombat() && !me->IsInEvadeMode())
+                    if (!me->IsEngaged() && !me->IsInEvadeMode())
                         if (Unit* target = me->SelectNearbyTarget(nullptr, 30.0f))
                             AttackStart(target);
                     events2.ScheduleEvent(EVENT_SEARCH_FIGHT, 1000);

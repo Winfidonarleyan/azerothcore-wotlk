@@ -153,7 +153,7 @@ public:
     bool operator()(Creature* creature)
     {
         return creature->IsAlive() && creature->GetEntry() == NPC_RISEN_ARCHMAGE &&
-               creature->GetSpawnId() && !creature->IsInCombat();
+               creature->GetSpawnId() && !creature->IsEngaged;
     }
 };
 
@@ -578,14 +578,14 @@ public:
                 me->m_Events.AddEvent(new ValithriaDespawner(me), me->m_Events.CalculateTime(5000));
             else if (action == ACTION_ENTER_COMBAT)
             {
-                if (!me->IsInCombat())
+                if (!me->IsEngaged())
                     me->SetInCombatWithZone();
             }
         }
 
         void UpdateAI(uint32 diff) override
         {
-            if (!me->IsInCombat())
+            if (!me->IsEngaged())
                 return;
 
             if (checkTimer <= diff)
@@ -739,7 +739,7 @@ public:
 
         void DoAction(int32 action) override
         {
-            if (action == ACTION_ENTER_COMBAT && !me->IsInCombat())
+            if (action == ACTION_ENTER_COMBAT && !me->IsEngaged())
                 me->SetInCombatWithZone();
         }
 
@@ -753,7 +753,7 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (!me->IsInCombat())
+            if (!me->IsEngaged())
                 if (me->GetSpawnId())
                     if (!me->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
                         me->CastSpell(me, SPELL_CORRUPTION, false);

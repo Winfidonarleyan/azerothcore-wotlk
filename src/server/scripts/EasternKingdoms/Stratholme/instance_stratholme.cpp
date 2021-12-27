@@ -455,7 +455,7 @@ public:
                         --_baronRunTime;
                         instance->LoadGrid(4035.83f, -3336.31f);
                         Creature* baron = instance->GetCreature(_baronRivendareGUID);
-                        if (baron && !baron->IsInCombat())
+                        if (baron && !baron->IsEngaged())
                         {
                             switch (_baronRunTime)
                             {
@@ -488,7 +488,7 @@ public:
                         Creature* baron = instance->GetCreature(_baronRivendareGUID);
                         if (baron && baron->IsAlive())
                         {
-                            if (!baron->IsInCombat())
+                            if (!baron->IsEngaged())
                             {
                                 baron->HandleEmoteCommand(EMOTE_ONESHOT_ATTACK1H);
                                 if (Creature* ysida = baron->FindNearestCreature(NPC_YSIDA, 50.0f))

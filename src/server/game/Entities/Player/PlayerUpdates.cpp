@@ -1476,7 +1476,7 @@ void Player::UpdatePvP(bool state, bool _override)
 void Player::UpdatePotionCooldown(Spell* spell)
 {
     // no potion used i combat or still in combat
-    if (!GetLastPotionId() || IsInCombat())
+    if (!GetLastPotionId() || IsEngaged())
         return;
 
     // Call not from spell cast, send cooldown event for item spells if no in

@@ -171,7 +171,7 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (!me->IsInCombat() && sayGreet)
+            if (!me->IsEngaged() && sayGreet)
             {
                 for (SummonList::iterator itr = summons.begin(); itr != summons.end(); ++itr)
                 {
@@ -179,7 +179,7 @@ public:
                     {
                         if (Creature* cr = pInstance->instance->GetCreature(*itr))
                         {
-                            if (cr->IsInCombat())
+                            if (cr->IsEngaged())
                                 DoZoneInCombat();
                         }
                     }

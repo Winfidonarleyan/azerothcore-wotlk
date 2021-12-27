@@ -819,7 +819,7 @@ void Map::Update(const uint32 t_diff, const uint32 s_diff, bool  /*thread*/)
         }
 
         // handle updates for creatures in combat with player and are more than X yards away
-        if (player->IsInCombat())
+        if (player->IsEngaged())
         {
             updateList.clear();
             float rangeSq = player->GetGridActivationRange() - 1.0f;

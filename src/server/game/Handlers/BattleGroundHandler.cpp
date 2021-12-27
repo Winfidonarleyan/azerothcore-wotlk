@@ -500,7 +500,7 @@ void WorldSession::HandleBattlefieldLeaveOpcode(WorldPacket& recvData)
     recvData.read_skip<uint16>();                          // unk3
 
     // not allow leave battleground in combat
-    if (_player->IsInCombat())
+    if (_player->IsEngaged())
         if (Battleground* bg = _player->GetBattleground())
             if (bg->GetStatus() != STATUS_WAIT_LEAVE)
                 return;

@@ -146,7 +146,7 @@ public:
         void UpdateAI(uint32 diff) override
         {
             dropSludgeTimer += diff;
-            if (!me->IsInCombat() && dropSludgeTimer >= 5000)
+            if (!me->IsEngaged() && dropSludgeTimer >= 5000)
             {
                 if (me->IsWithinDist3d(3178, -3305, 319, 5.0f) && !summons.HasEntry(NPC_SEWAGE_SLIME))
                 {

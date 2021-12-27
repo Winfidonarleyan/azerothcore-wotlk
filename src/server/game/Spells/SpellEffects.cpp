@@ -2695,7 +2695,7 @@ void Spell::EffectDistract(SpellEffIndex /*effIndex*/)
         return;
 
     // Check for possible target
-    if (!unitTarget || unitTarget->IsInCombat())
+    if (!unitTarget || unitTarget->IsEngaged())
         return;
 
     // target must be OK to do this
@@ -5945,7 +5945,7 @@ void Spell::EffectActivateRune(SpellEffIndex effIndex)
                 if (player->GetBaseRune(j) != RuneType(m_spellInfo->Effects[effIndex].MiscValueB))
                     continue;
             player->SetRuneCooldown(j, 0);
-            player->SetGracePeriod(j, player->IsInCombat()); // xinef: reset grace period
+            player->SetGracePeriod(j, player->IsEngaged()); // xinef: reset grace period
             --count;
         }
     }
@@ -5962,7 +5962,7 @@ void Spell::EffectActivateRune(SpellEffIndex effIndex)
                 if (player->GetRuneCooldown(l) >= player->GetRuneCooldown(l + 1))
                     l++;
                 player->SetRuneCooldown(l, 0);
-                player->SetGracePeriod(l, player->IsInCombat()); // xinef: reset grace period
+                player->SetGracePeriod(l, player->IsEngaged()); // xinef: reset grace period
                 --count;
             }
             else
@@ -5982,7 +5982,7 @@ void Spell::EffectActivateRune(SpellEffIndex effIndex)
             if (player->GetRuneCooldown(i) && (player->GetCurrentRune(i) == RUNE_FROST ||  player->GetCurrentRune(i) == RUNE_DEATH))
             {
                 player->SetRuneCooldown(i, 0);
-                player->SetGracePeriod(i, player->IsInCombat()); // xinef: reset grace period
+                player->SetGracePeriod(i, player->IsEngaged()); // xinef: reset grace period
             }
         }
     }
@@ -6183,7 +6183,7 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* 
         //    ((Minion*)summon)->SetFollowAngle(m_caster->GetAngle(summon));
 
         // xinef: move this here, some auras are added in initstatsforlevel!
-        if (!summon->IsInCombat() && !summon->IsTrigger())
+        if (!summon->IsEngaged() && !summon->IsTrigger())
         {
             //  summon->AI()->EnterEvadeMode();
             summon->GetMotionMaster()->Clear(false);

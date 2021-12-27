@@ -218,7 +218,7 @@ struct boss_twin_valkyrAI : public ScriptedAI
         me->LowerPlayerDamageReq(me->GetMaxHealth());
         DoZoneInCombat();
         if( Creature* twin = GetSister() )
-            if( !twin->IsInCombat() )
+            if( !twin->IsEngaged() )
                 if( Unit* target = twin->SelectNearestTarget(200.0f) )
                     twin->AI()->AttackStart(target);
 

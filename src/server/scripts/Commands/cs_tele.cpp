@@ -295,7 +295,7 @@ public:
         }
 
         Player* player = handler->GetSession()->GetPlayer();
-        if (player->IsInCombat())
+        if (player->IsEngaged())
         {
             handler->SendSysMessage(LANG_YOU_IN_COMBAT);
             handler->SetSentErrorMessage(true);

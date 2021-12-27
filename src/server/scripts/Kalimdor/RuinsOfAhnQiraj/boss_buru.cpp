@@ -207,7 +207,7 @@ public:
         void EnterCombat(Unit* attacker) override
         {
             if (Creature* buru = me->GetMap()->GetCreature(_instance->GetGuidData(DATA_BURU)))
-                if (!buru->IsInCombat())
+                if (!buru->IsEngaged())
                     buru->AI()->AttackStart(attacker);
         }
 

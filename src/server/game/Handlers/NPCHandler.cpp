@@ -320,7 +320,7 @@ void WorldSession::HandleGossipHelloOpcode(WorldPacket& recvData)
         return;
 
     // xinef: do not allow to open gossip when npc is in combat
-    if (unit->GetUInt32Value(UNIT_NPC_FLAGS) == UNIT_NPC_FLAG_GOSSIP && unit->IsInCombat()) // should work on all flags?
+    if (unit->GetUInt32Value(UNIT_NPC_FLAGS) == UNIT_NPC_FLAG_GOSSIP && unit->IsEngaged()) // should work on all flags?
         return;
 
     // set faction visible if needed

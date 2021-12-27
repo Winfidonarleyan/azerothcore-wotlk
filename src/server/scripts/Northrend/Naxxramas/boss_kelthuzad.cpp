@@ -292,7 +292,7 @@ public:
 
         void MoveInLineOfSight(Unit* who) override
         {
-            if (!me->IsInCombat() && who->GetTypeId() == TYPEID_PLAYER && who->IsAlive() && me->GetDistance(who) <= 50.0f)
+            if (!me->IsEngaged() && who->GetTypeId() == TYPEID_PLAYER && who->IsAlive() && me->GetDistance(who) <= 50.0f)
                 AttackStart(who);
         }
 
@@ -328,7 +328,7 @@ public:
         void JustSummoned(Creature* cr) override
         {
             summons.Summon(cr);
-            if (!cr->IsInCombat())
+            if (!cr->IsEngaged())
             {
                 cr->GetMotionMaster()->MoveRandom(5);
             }
@@ -547,7 +547,7 @@ public:
             }
             else if (param == ACTION_SECOND_PHASE)
             {
-                if (!me->IsInCombat())
+                if (!me->IsEngaged())
                 {
                     me->DespawnOrUnsummon(500);
                 }

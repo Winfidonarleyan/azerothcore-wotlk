@@ -234,7 +234,7 @@ public:
         void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
         {
             if (Unit* caster = GetCaster())
-                if (caster->IsAlive() && caster->IsInCombat())
+                if (caster->IsAlive() && caster->IsEngaged())
                 {
                     caster->CastSpell(GetTarget(), HEX_OF_JAMMAL_AN, true);
                     caster->CastSpell(GetTarget(), HEX_OF_JAMMAL_AN_CHARM, true);

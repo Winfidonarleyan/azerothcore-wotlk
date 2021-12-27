@@ -844,7 +844,7 @@ public:
             for (uint8 i = 0; i < NUM_OF_TRASH; ++i)
                 if (TrashActive[i])
                     if (Creature* c = instance->GetCreature(NPC_TrashGUID[i]))
-                        if (c->IsAlive() && !c->IsInCombat())
+                        if (c->IsAlive() && !c->IsEngaged())
                             c->AI()->DoAction(1);
 
             if (WaveNumber == 5 || WaveNumber == 10)

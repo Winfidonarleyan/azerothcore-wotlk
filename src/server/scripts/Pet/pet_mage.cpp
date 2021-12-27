@@ -88,7 +88,7 @@ struct npc_pet_mage_mirror_image : CasterAI
         }
 
         ((Minion*)me)->SetFollowAngle(angle);
-        if (owner->IsInCombat())
+        if (owner->IsEngaged())
             me->NearTeleportTo(me->GetPositionX() + cos(angle)*dist, me->GetPositionY() + sin(angle)*dist, me->GetPositionZ(), me->GetOrientation(), false, false, false, false);
         else
             me->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, me->GetFollowAngle(), MOTION_SLOT_ACTIVE);
@@ -167,11 +167,11 @@ struct npc_pet_mage_mirror_image : CasterAI
                 me->GetThreatMgr().resetAllAggro();
                 me->AddThreat(selection, 1000000.0f);
 
-                if (owner->IsInCombat())
+                if (owner->IsEngaged())
                     AttackStart(selection);
             }
 
-            if (!owner->IsInCombat() && !me->GetVictim())
+            if (!owner->IsEngaged() && !me->GetVictim())
                 EnterEvadeMode();
         }
     }
@@ -188,7 +188,7 @@ struct npc_pet_mage_mirror_image : CasterAI
         if (events.GetTimer() < 1200)
             return;
 
-        if (!me->IsInCombat() || !me->GetVictim())
+        if (!me->IsEngaged() || !me->GetVictim())
         {
             MySelectNextTarget();
             return;

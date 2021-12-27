@@ -1493,7 +1493,7 @@ struct gunship_npc_AI : public ScriptedAI
 
     void EnterEvadeMode() override
     {
-        if (!me->IsAlive() || !me->IsInCombat())
+        if (!me->IsAlive() || !me->IsEngaged())
             return;
         me->GetThreatMgr().ClearAllThreat();
         me->CombatStop(true);
@@ -1554,7 +1554,7 @@ struct npc_gunship_boarding_addAI : public ScriptedAI
 
     void EnterEvadeMode() override
     {
-        if (!me->IsAlive() || !me->IsInCombat())
+        if (!me->IsAlive() || !me->IsEngaged())
             return;
         me->GetThreatMgr().ClearAllThreat();
         me->CombatStop(true);

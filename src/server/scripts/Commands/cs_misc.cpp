@@ -1375,7 +1375,7 @@ public:
 
         Player* player = target->GetConnectedPlayer();
 
-        if (player->IsInFlight() || player->IsInCombat())
+        if (player->IsInFlight() || player->IsEngaged())
         {
             SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(7355);
             if (!spellInfo)

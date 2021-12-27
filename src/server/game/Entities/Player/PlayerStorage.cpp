@@ -1871,7 +1871,7 @@ InventoryResult Player::CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool
                 // - in-progress arenas
                 if (!pProto->CanChangeEquipStateInCombat())
                 {
-                    if (IsInCombat())
+                    if (IsEngaged())
                         return EQUIP_ERR_NOT_IN_COMBAT;
 
                     if (Battleground* bg = GetBattleground())
@@ -1879,7 +1879,7 @@ InventoryResult Player::CanEquipItem(uint8 slot, uint16& dest, Item* pItem, bool
                             return EQUIP_ERR_NOT_DURING_ARENA_MATCH;
                 }
 
-                if (IsInCombat() && (pProto->Class == ITEM_CLASS_WEAPON || pProto->InventoryType == INVTYPE_RELIC) && m_weaponChangeTimer != 0)
+                if (IsEngaged() && (pProto->Class == ITEM_CLASS_WEAPON || pProto->InventoryType == INVTYPE_RELIC) && m_weaponChangeTimer != 0)
                     return EQUIP_ERR_CANT_DO_RIGHT_NOW;         // maybe exist better err
 
                 if (IsNonMeleeSpellCast(false))
@@ -2035,7 +2035,7 @@ InventoryResult Player::CanUnequipItem(uint16 pos, bool swap) const
     // - in-progress arenas
     if (!pProto->CanChangeEquipStateInCombat())
     {
-        if (IsInCombat())
+        if (IsEngaged())
             return EQUIP_ERR_NOT_IN_COMBAT;
 
         if (Battleground* bg = GetBattleground())
@@ -2772,7 +2772,7 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
 
             _ApplyItemMods(pItem, slot, true);
 
-            if (pProto && IsInCombat() && (pProto->Class == ITEM_CLASS_WEAPON || pProto->InventoryType == INVTYPE_RELIC) && m_weaponChangeTimer == 0)
+            if (pProto && IsEngaged() && (pProto->Class == ITEM_CLASS_WEAPON || pProto->InventoryType == INVTYPE_RELIC) && m_weaponChangeTimer == 0)
             {
                 uint32 cooldownSpell = getClass() == CLASS_ROGUE ? 6123 : 6119;
                 SpellInfo const* spellProto = sSpellMgr->GetSpellInfo(cooldownSpell);

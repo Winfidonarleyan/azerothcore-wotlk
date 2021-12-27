@@ -158,7 +158,7 @@ public:
                 Creature* c = ObjectAccessor::GetCreature(*me, NearbyGUID[i]);
                 if (c)
                 {
-                    if (!c->IsInCombat())
+                    if (!c->IsEngaged())
                     {
                         c->SetNoCallAssistance(true);
                         if (c->AI())

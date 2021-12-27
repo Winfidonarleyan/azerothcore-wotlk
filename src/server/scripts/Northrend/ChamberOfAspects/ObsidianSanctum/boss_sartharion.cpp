@@ -679,7 +679,7 @@ public:
 
                 if (Creature* dragon = ObjectAccessor::GetCreature(*me, instance->GetGuidData(dragons[i])))
                 {
-                    if (checkCombat && dragon->IsInCombat())
+                    if (checkCombat && dragon->IsEngaged())
                     {
                         continue;
                     }

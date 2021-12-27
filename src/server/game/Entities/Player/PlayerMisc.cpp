@@ -343,7 +343,7 @@ void Player::UpdateAfkReport(time_t currTime)
 
 void Player::UpdateContestedPvP(uint32 diff)
 {
-    if (!m_contestedPvPTimer || IsInCombat())
+    if (!m_contestedPvPTimer || IsEngaged())
         return;
     if (m_contestedPvPTimer <= diff)
     {

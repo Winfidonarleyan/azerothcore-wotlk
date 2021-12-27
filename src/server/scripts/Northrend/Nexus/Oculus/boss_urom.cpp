@@ -304,7 +304,7 @@ public:
                 if( releaseLockTimer >= 5000 )
                 {
                     lock = false;
-                    if (me->IsInCombat())
+                    if (me->IsEngaged())
                     {
                         LeaveCombat();
                         me->CastSpell(me, SPELL_EVOCATION, true);

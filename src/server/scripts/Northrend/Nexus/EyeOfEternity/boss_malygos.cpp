@@ -824,7 +824,7 @@ public:
 
         void HandleIntroSpeech(const uint32 diff)
         {
-            if (me->IsInCombat() || me->isDead())
+            if (me->IsEngaged() || me->isDead())
                 return;
 
             // speech timer

@@ -224,7 +224,7 @@ public:
                     {
                         const CreatureGroup::CreatureGroupMemberType& m = f->GetMembers();
                         for (CreatureGroup::CreatureGroupMemberType::const_iterator itr = m.begin(); itr != m.end(); ++itr)
-                            if (itr->first->IsAlive() && itr->first->IsInCombat() && !itr->first->IsInEvadeMode() && itr->first->IsAIEnabled)
+                            if (itr->first->IsAlive() && itr->first->IsEngaged() && !itr->first->IsInEvadeMode() && itr->first->IsAIEnabled)
                                 itr->first->AI()->EnterEvadeMode();
                     }
                     return;

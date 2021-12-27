@@ -413,7 +413,7 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (!me->IsInCombat())
+            if (!me->IsEngaged())
             {
                 outofCombatTimer += diff;
                 if (outofCombatTimer >= 10000)

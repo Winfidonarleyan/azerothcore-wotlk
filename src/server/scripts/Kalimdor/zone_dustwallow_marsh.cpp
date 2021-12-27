@@ -127,7 +127,7 @@ public:
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
             SetCombatMovement(true);
 
-            if (me->IsInCombat())
+            if (me->IsEngaged())
                 if (Unit* unit = me->GetVictim())
                     me->GetMotionMaster()->MoveChase(unit);
         }

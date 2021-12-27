@@ -357,7 +357,7 @@ public:
 
         void SpellHit(Unit* /*caster*/, SpellInfo const* spell) override
         {
-            if (spell->Id == 71080 && me->IsInCombat() && !me->IsInEvadeMode())
+            if (spell->Id == 71080 && me->IsEngaged() && !me->IsInEvadeMode())
                 DoAction(ACTION_CAST_INVOCATION);
         }
 
@@ -626,7 +626,7 @@ public:
 
         void SpellHit(Unit* /*caster*/, SpellInfo const* spell) override
         {
-            if (spell->Id == 71081 && me->IsInCombat() && !me->IsInEvadeMode())
+            if (spell->Id == 71081 && me->IsEngaged() && !me->IsInEvadeMode())
                 DoAction(ACTION_CAST_INVOCATION);
         }
 
@@ -919,7 +919,7 @@ public:
 
         void SpellHit(Unit* /*caster*/, SpellInfo const* spell) override
         {
-            if (spell->Id == 71070 && me->IsInCombat() && !me->IsInEvadeMode())
+            if (spell->Id == 71070 && me->IsEngaged() && !me->IsInEvadeMode())
                 DoAction(ACTION_CAST_INVOCATION);
         }
 
@@ -939,7 +939,7 @@ public:
                     DoAction(ACTION_CAST_INVOCATION);
                     break;
                 case ACTION_CAST_INVOCATION:
-                    if (me->IsInCombat())
+                    if (me->IsEngaged())
                         Talk(SAY_VALANAR_INVOCATION);
                     me->CastSpell(me, SPELL_INVOCATION_OF_BLOOD_VALANAR, true);
                     me->CastSpell(me, SPELL_INVOCATION_VISUAL_ACTIVE, true);
@@ -997,7 +997,7 @@ public:
                                 visualSpellId = 71070;
                                 break;
                         }
-                        if (!visualSpellId || !current || !next || !current->IsInCombat() || !next->IsInCombat())
+                        if (!visualSpellId || !current || !next || !current->IsEngaged() || !next->IsEngaged())
                         {
                             EnterEvadeMode();
                             return;
@@ -1295,7 +1295,7 @@ public:
 
         void DoAction(int32 action) override
         {
-            if (action != ACTION_FLAME_BALL_CHASE || me->IsInCombat())
+            if (action != ACTION_FLAME_BALL_CHASE || me->IsEngaged())
             {
                 return;
             }

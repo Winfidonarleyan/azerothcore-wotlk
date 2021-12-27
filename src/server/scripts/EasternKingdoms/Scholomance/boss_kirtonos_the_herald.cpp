@@ -159,7 +159,7 @@ public:
                     me->SetReactState(REACT_AGGRESSIVE);
                     break;
                 case INTRO_6:
-                    if (!me->IsInCombat())
+                    if (!me->IsEngaged())
                     {
                         me->GetMotionMaster()->MovePoint(0, PosMove[1]);
                     }

@@ -83,7 +83,7 @@ bool ArenaSpectator::HandleSpectatorSpectateCommand(ChatHandler* handler, std::s
     if (player->GetVehicle())
         errors.push_back("Can't be on a vehicle.");
 
-    if (player->IsInCombat())
+    if (player->IsEngaged())
         errors.push_back("Can't be in combat.");
 
     if (player->isUsingLfg())

@@ -743,7 +743,7 @@ namespace Acore
         MostHPMissingInRange(Unit const* obj, float range, uint32 hp) : i_obj(obj), i_range(range), i_hp(hp) {}
         bool operator()(Unit* u)
         {
-            if (u->IsAlive() && u->IsInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) && u->GetMaxHealth() - u->GetHealth() > i_hp)
+            if (u->IsAlive() && u->IsEngaged() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) && u->GetMaxHealth() - u->GetHealth() > i_hp)
             {
                 i_hp = u->GetMaxHealth() - u->GetHealth();
                 return true;
@@ -762,7 +762,7 @@ namespace Acore
         FriendlyCCedInRange(Unit const* obj, float range) : i_obj(obj), i_range(range) {}
         bool operator()(Unit* u)
         {
-            if (u->IsAlive() && u->IsInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
+            if (u->IsAlive() && u->IsEngaged() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
                     (u->isFeared() || u->IsCharmed() || u->isFrozen() || u->HasUnitState(UNIT_STATE_STUNNED) || u->HasUnitState(UNIT_STATE_CONFUSED)))
             {
                 return true;
@@ -786,7 +786,7 @@ namespace Acore
         }
         bool operator()(Unit* u)
         {
-            if (u->IsAlive() && u->IsInCombat() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
+            if (u->IsAlive() && u->IsEngaged() && !i_obj->IsHostileTo(u) && i_obj->IsWithinDistInMap(u, i_range) &&
                     !(u->HasAura(i_spell)))
             {
                 return true;
@@ -1006,7 +1006,7 @@ namespace Acore
         {}
         bool operator()(Unit* u)
         {
-            if (!u->IsAlive() || u->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE) || (u->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC) && !u->IsInCombat()))
+            if (!u->IsAlive() || u->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE) || (u->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC) && !u->IsEngaged()))
                 return false;
             if (u->GetGUID() == i_funit->GetGUID())
                 return false;

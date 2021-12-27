@@ -625,7 +625,7 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (!me->IsInCombat())
+            if (!me->IsEngaged())
                 return;
 
             if (_banished)

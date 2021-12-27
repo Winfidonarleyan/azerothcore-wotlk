@@ -164,7 +164,7 @@ class spell_pal_divine_intervention : public AuraScript
 
     void HandleRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
     {
-        if (!GetTarget()->IsInCombat() && GetTarget()->GetTypeId() == TYPEID_PLAYER)
+        if (!GetTarget()->IsEngaged() && GetTarget()->GetTypeId() == TYPEID_PLAYER)
             GetTarget()->RemoveAurasDueToSpell(GetTarget()->ToPlayer()->GetTeamId() == TEAM_ALLIANCE ? 57723 : 57724);
     }
 

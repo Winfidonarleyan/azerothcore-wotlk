@@ -290,7 +290,7 @@ public:
 
         void UpdateEscortAI(uint32 diff) override
         {
-            if (!me->IsInCombat())
+            if (!me->IsEngaged())
                 return;
 
             // Return since we have no target

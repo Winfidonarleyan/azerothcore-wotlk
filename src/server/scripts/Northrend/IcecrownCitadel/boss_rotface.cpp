@@ -207,7 +207,7 @@ public:
 
         void JustSummoned(Creature* summon) override
         {
-            if (me->IsAlive() && me->IsInCombat() && !me->IsInEvadeMode())
+            if (me->IsAlive() && me->IsEngaged() && !me->IsInEvadeMode())
                 summons.Summon(summon);
             else
                 summon->DespawnOrUnsummon(1);

@@ -82,7 +82,7 @@ public:
             Talk(SAY_DEATH);
 
             if (Creature* soccothrates = ObjectAccessor::GetCreature(*me, instance->GetGuidData(DATA_SOCCOTHRATES)))
-                if (soccothrates->IsAlive() && !soccothrates->IsInCombat())
+                if (soccothrates->IsAlive() && !soccothrates->IsEngaged())
                     soccothrates->AI()->SetData(1, 1);
         }
 
@@ -151,7 +151,7 @@ public:
                     break;
                 case EVENT_ME_FIRST:
                     if (Creature* soccothrates = ObjectAccessor::GetCreature(*me, instance->GetGuidData(DATA_SOCCOTHRATES)))
-                        if (soccothrates->IsAlive() && !soccothrates->IsInCombat())
+                        if (soccothrates->IsAlive() && !soccothrates->IsEngaged())
                             soccothrates->AI()->Talk(SAY_AGGRO_DALLIAH_FIRST);
                     break;
                 case EVENT_CHECK_HEALTH:

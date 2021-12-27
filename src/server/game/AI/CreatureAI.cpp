@@ -157,7 +157,7 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
     // pussywizard: civilian, non-combat pet or any other NOT HOSTILE TO ANYONE (!)
     if (me->IsMoveInLineOfSightDisabled())
         if (me->GetCreatureType() == CREATURE_TYPE_NON_COMBAT_PET ||      // nothing more to do, return
-                !who->IsInCombat() ||                                         // if not in combat, nothing more to do
+                !who->IsEngaged() ||                                         // if not in combat, nothing more to do
                 !me->IsWithinDist(who, ATTACK_DISTANCE, true, false))                      // if in combat and in dist - neutral to all can actually assist other creatures
             return;
 
@@ -227,12 +227,6 @@ void CreatureAI::EnterEvadeMode()
         }
     }
 }
-
-/*void CreatureAI::AttackedBy(Unit* attacker)
-{
-    if (!me->GetVictim())
-        AttackStart(attacker);
-}*/
 
 void CreatureAI::SetGazeOn(Unit* target)
 {

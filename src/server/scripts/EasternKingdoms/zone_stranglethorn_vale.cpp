@@ -97,7 +97,7 @@ public:
 
                 Reset_Timer -= diff;
 
-                if (me->IsInCombat() && me->GetVictim())
+                if (me->IsEngaged() && me->GetVictim())
                 {
                     if (Player* player = me->GetVictim()->ToPlayer())
                     {

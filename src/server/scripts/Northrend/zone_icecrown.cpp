@@ -398,7 +398,7 @@ public:
             attackTimer += diff;
             if (attackTimer >= 1500)
             {
-                if (!me->IsInCombat())
+                if (!me->IsEngaged())
                     if (Unit* target = me->SelectNearbyTarget(nullptr, 20.0f))
                         AttackStart(target);
                 attackTimer = 0;
@@ -625,7 +625,7 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (!me->IsInCombat())
+            if (!me->IsEngaged())
                 return;
 
             checkTimer += diff;

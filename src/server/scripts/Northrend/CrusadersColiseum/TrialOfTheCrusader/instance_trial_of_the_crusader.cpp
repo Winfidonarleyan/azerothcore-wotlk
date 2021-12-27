@@ -136,7 +136,7 @@ public:
             Map::PlayerList const& pl = instance->GetPlayers();
             for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
                 if (Player* plr = itr->GetSource())
-                    if (!plr->IsGameMaster() && plr->IsInCombat() /*performance*/)
+                    if (!plr->IsGameMaster() && plr->IsEngaged() /*performance*/)
                     {
                         for (uint8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i) // loop through equipped items
                             if (Item* item = plr->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
@@ -463,7 +463,7 @@ public:
                         AchievementTimer = 0;
                         for (ObjectGuid const& guid : NPC_ChampionGUIDs)
                             if (Creature* c = instance->GetCreature(guid))
-                                if (!c->IsInCombat())
+                                if (!c->IsEngaged())
                                     if (Unit* target = c->SelectNearestTarget(200.0f))
                                         c->AI()->AttackStart(target);
                     }

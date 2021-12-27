@@ -358,7 +358,7 @@ public:
         void EnterEvadeMode() override
         {
             Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);
-            if (player && player->IsInCombat() && player->getAttackerForHelper())
+            if (player && player->IsEngaged() && player->getAttackerForHelper())
             {
                 AttackStart(player->getAttackerForHelper());
                 return;
@@ -390,12 +390,12 @@ public:
                 return;
             }
 
-            if (!me->IsInCombat() && !EventOnWait)
+            if (!me->IsEngaged() && !EventOnWait)
             {
                 if (checkPlayerTimer <= diff)
                 {
                     Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);
-                    if (player && player->IsInCombat() && player->getAttackerForHelper())
+                    if (player && player->IsEngaged() && player->getAttackerForHelper())
                         AttackStart(player->getAttackerForHelper());
                     checkPlayerTimer = 1000;
                 }

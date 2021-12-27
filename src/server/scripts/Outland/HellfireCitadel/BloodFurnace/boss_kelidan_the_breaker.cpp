@@ -129,7 +129,7 @@ public:
                     for (uint8 i = 0; i < 5; ++i)
                     {
                         Creature* channeler = ObjectAccessor::GetCreature(*me, channelers[i]);
-                        if (channeler && !channeler->IsInCombat())
+                        if (channeler && !channeler->IsEngaged())
                             channeler->SetInCombatWithZone();
                     }
                 }
@@ -162,7 +162,7 @@ public:
             for (uint8 i = 0; i < 5; ++i)
             {
                 Creature* channeler = ObjectAccessor::GetCreature(*me, channelers[i]);
-                if (channeler && !channeler->HasUnitState(UNIT_STATE_CASTING) && !channeler->IsInCombat())
+                if (channeler && !channeler->HasUnitState(UNIT_STATE_CASTING) && !channeler->IsEngaged())
                 {
                     Creature* target = ObjectAccessor::GetCreature(*me, channelers[(i + 2) % 5]);
                     if (target)

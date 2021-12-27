@@ -1791,13 +1791,13 @@ public:
                 std::list<Creature*> unitList;
                 GetCreatureListWithEntryInGrid(unitList, me, NPC_FROSTWING_WHELP, 40.0f);
                 for (std::list<Creature*>::const_iterator itr = unitList.begin(); itr != unitList.end(); ++itr)
-                    if (!(*itr)->IsInCombat())
+                    if (!(*itr)->IsEngaged())
                         (*itr)->AI()->AttackStart(who);
             }
             else
             {
                 if (Creature* c = me->FindNearestCreature(NPC_FROSTWARDEN_HANDLER, 40.0f, true))
-                    if (!c->IsInCombat())
+                    if (!c->IsEngaged())
                         c->AI()->AttackStart(who);
                 me->CallForHelp(15.0f);
             }

@@ -650,7 +650,7 @@ public:
                     for (auto& itr : PatchwerkRoomTrash)
                     {
                         Creature* trash = ObjectAccessor::GetCreature(*patch, itr);
-                        if (trash && trash->IsAlive() && !trash->IsInCombat())
+                        if (trash && trash->IsAlive() && !trash->IsEngaged())
                         {
                             trash->AI()->AttackStart(patch->GetVictim());
                         }

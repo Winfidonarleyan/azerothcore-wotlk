@@ -90,7 +90,7 @@ public:
         if (!spell)
             return false;
 
-        if (player->IsInCombat())
+        if (player->IsEngaged())
         {
             Spell::SendCastResult(player, spell, 0, SPELL_FAILED_AFFECTING_COMBAT);
             return true;
@@ -110,7 +110,7 @@ public:
 
     bool OnTrigger(Player* player, AreaTrigger const* /*areaTrigger*/) override
     {
-        if (player->IsInCombat())
+        if (player->IsEngaged())
         {
             if (SpellInfo const* spell = sSpellMgr->GetSpellInfo(FROZEN_THRONE_TELEPORT))
                 Spell::SendCastResult(player, spell, 0, SPELL_FAILED_AFFECTING_COMBAT);

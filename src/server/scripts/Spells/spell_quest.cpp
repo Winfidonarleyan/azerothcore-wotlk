@@ -354,7 +354,7 @@ class spell_q12943_shadow_vault_decree : public SpellScript
         // if thane is present and not in combat - allow cast
         Unit* caster = GetCaster();
         if (Creature* thane = caster->FindNearestCreature(NPC_THANE_UFRANG, 30.0f))
-            if (!thane->IsInCombat())
+            if (!thane->IsEngaged())
                 return SPELL_CAST_OK;
 
         return SPELL_FAILED_CASTER_AURASTATE;

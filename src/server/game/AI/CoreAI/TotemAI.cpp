@@ -87,7 +87,7 @@ void TotemAI::UpdateAI(uint32 /*diff*/)
         Cell::VisitAllObjects(me, checker, max_range);
     }
 
-    if (!victim && me->GetCharmerOrOwnerOrSelf()->IsInCombat())
+    if (!victim && me->GetCharmerOrOwnerOrSelf()->IsEngaged())
     {
         victim = me->GetCharmerOrOwnerOrSelf()->getAttackerForHelper();
     }

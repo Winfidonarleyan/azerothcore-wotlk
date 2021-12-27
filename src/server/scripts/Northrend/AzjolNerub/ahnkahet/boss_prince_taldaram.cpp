@@ -496,7 +496,7 @@ public:
 
     bool OnGossipHello(Player* pPlayer, GameObject* go) override
     {
-        if (pPlayer && pPlayer->IsInCombat())
+        if (pPlayer && pPlayer->IsEngaged())
         {
             return true;
         }

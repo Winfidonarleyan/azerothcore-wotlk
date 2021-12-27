@@ -135,7 +135,7 @@ public:
                 pInstance->SetData(DATA_DALRONN_AND_SKARVALD, IN_PROGRESS);
                 if (Creature* dalronn = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_DALRONN)))
                 {
-                    if (!dalronn->IsInCombat() && who)
+                    if (!dalronn->IsEngaged() && who)
                     {
                         dalronn->AddThreat(who, 0.0f);
                         dalronn->AI()->AttackStart(who);
@@ -303,7 +303,7 @@ public:
                 pInstance->SetData(DATA_DALRONN_AND_SKARVALD, IN_PROGRESS);
                 if (Creature* skarvald = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_SKARVALD)))
                 {
-                    if (!skarvald->IsInCombat() && who)
+                    if (!skarvald->IsEngaged() && who)
                     {
                         skarvald->AddThreat(who, 0.0f);
                         skarvald->AI()->AttackStart(who);

@@ -409,7 +409,7 @@ public:
             if (!bIntro)
             {
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                if( !me->IsInCombat() )
+                if( !me->IsEngaged() )
                     Talk(SAY_INTRO);
                 bIntro = true;
             }

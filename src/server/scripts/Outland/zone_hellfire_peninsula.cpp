@@ -217,7 +217,7 @@ public:
                     Talk(EMOTE_WOLF_HOWL);
                     break;
                 case 50:
-                    if (ryga && ryga->IsAlive() && !ryga->IsInCombat())
+                    if (ryga && ryga->IsAlive() && !ryga->IsEngaged())
                         ryga->AI()->Talk(SAY_WOLF_WELCOME);
                     break;
             }

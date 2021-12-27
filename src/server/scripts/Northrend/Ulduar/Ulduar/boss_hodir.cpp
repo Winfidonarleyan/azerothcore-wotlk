@@ -396,7 +396,7 @@ public:
 
             if (!UpdateVictim())
             {
-                if (me->IsInCombat())
+                if (me->IsEngaged())
                 {
                     Map::PlayerList const& pl = me->GetMap()->GetPlayers();
                     for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)

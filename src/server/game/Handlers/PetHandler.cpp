@@ -1451,7 +1451,7 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPacket& recvPacket)
         delete spell;
     }
 
-    if (SetFollow && !caster->IsInCombat())
+    if (SetFollow && !caster->IsEngaged())
         caster->AddUnitState(UNIT_STATE_FOLLOW);
 }
 

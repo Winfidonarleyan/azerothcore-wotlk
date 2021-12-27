@@ -2731,7 +2731,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
     }
 
     if (missInfo != SPELL_MISS_EVADE && effectUnit != m_caster && m_caster->IsFriendlyTo(effectUnit) && m_spellInfo->IsPositive() &&
-        effectUnit->IsInCombat() && !m_spellInfo->HasAttribute(SPELL_ATTR1_NO_THREAT))
+        effectUnit->IsEngaged() && !m_spellInfo->HasAttribute(SPELL_ATTR1_NO_THREAT))
     {
         m_caster->SetInCombatWith(effectUnit);
     }
@@ -2850,7 +2850,7 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
             }
 
             // xinef: triggered spells should not prolong combat
-            if (unit->IsInCombat() && !m_spellInfo->HasAttribute(SPELL_ATTR3_SUPRESS_TARGET_PROCS) && !m_triggeredByAuraSpell)
+            if (unit->IsEngaged() && !m_spellInfo->HasAttribute(SPELL_ATTR3_SUPRESS_TARGET_PROCS) && !m_triggeredByAuraSpell)
             {
                 m_caster->SetInCombatState(unit->GetCombatTimer() > 0, unit);
                 unit->getHostileRefMgr().threatAssist(m_caster, 0.0f);
@@ -5363,7 +5363,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         if (m_spellInfo->ExcludeCasterAuraSpell && m_caster->HasAura(sSpellMgr->GetSpellIdForDifficulty(m_spellInfo->ExcludeCasterAuraSpell, m_caster)))
             return SPELL_FAILED_CASTER_AURASTATE;
 
-        if (reqCombat && m_caster->IsInCombat() && !m_spellInfo->CanBeUsedInCombat())
+        if (reqCombat && m_caster->IsEngaged() && !m_spellInfo->CanBeUsedInCombat())
             return SPELL_FAILED_AFFECTING_COMBAT;
     }
 
@@ -5379,7 +5379,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                             if (Player* member = itr->GetSource())
                                 if (member->IsInMap(m_caster))
                                     if (Unit* victim = member->GetVictim())
-                                        if (victim->IsInCombat() && m_caster->GetDistance(victim) < m_caster->GetVisibilityRange())
+                                        if (victim->IsEngaged() && m_caster->GetDistance(victim) < m_caster->GetVisibilityRange())
                                         {
                                             m_caster->CombatStart(victim);
                                             victim->AddThreat(m_caster, 1.0f);
@@ -5736,7 +5736,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                     if (!pet->GetCurrentFoodBenefitLevel(foodItem->GetTemplate()->ItemLevel))
                         return SPELL_FAILED_FOOD_LOWLEVEL;
 
-                    if (m_caster->IsInCombat() || pet->IsInCombat())
+                    if (m_caster->IsEngaged() || pet->IsEngaged())
                         return SPELL_FAILED_AFFECTING_COMBAT;
 
                     break;

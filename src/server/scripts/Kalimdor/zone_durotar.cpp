@@ -119,7 +119,7 @@ public:
 
                         if (Unit* summoner = (*itr)->ToTempSummon()->GetSummonerUnit())
                             if (!summoner->HasAura(SPELL_NO_SUMMON_AURA) && !summoner->HasAura(SPELL_SUMMON_ZENTABRA_TRIGGER)
-                                    && !summoner->IsInCombat())
+                                    && !summoner->IsEngaged())
                             {
                                 me->AddAura(SPELL_NO_SUMMON_AURA, summoner);
                                 me->AddAura(SPELL_DETECT_INVIS, summoner);

@@ -157,7 +157,7 @@ bool SummonList::IsAnyCreatureInCombat() const
     {
         if (Creature* summon = ObjectAccessor::GetCreature(*me, guid))
         {
-            if (summon->IsInCombat())
+            if (summon->IsEngaged())
             {
                 return true;
             }
@@ -490,7 +490,7 @@ enum eNPCs
 
 bool ScriptedAI::EnterEvadeIfOutOfCombatArea()
 {
-    if (me->IsInEvadeMode() || !me->IsInCombat())
+    if (me->IsInEvadeMode() || !me->IsEngaged())
         return false;
 
     if (_evadeCheckCooldown == time(nullptr))
@@ -637,7 +637,7 @@ bool BossAI::CheckBoundary(Unit* who)
 void BossAI::JustSummoned(Creature* summon)
 {
     summons.Summon(summon);
-    if (me->IsInCombat())
+    if (me->IsEngaged())
         DoZoneInCombat(summon);
 }
 

@@ -336,7 +336,7 @@ public:
                 if (who->GetGUID() == _left)
                 {
                     _left.Clear();
-                    if (me->IsInCombat())
+                    if (me->IsEngaged())
                     {
                         Talk(SAY_LEFT_ARM_GONE);
                         events.ScheduleEvent(EVENT_RESTORE_ARM_LEFT, 50000);
@@ -345,7 +345,7 @@ public:
                 else
                 {
                     _right.Clear();
-                    if (me->IsInCombat())
+                    if (me->IsEngaged())
                     {
                         Talk(SAY_RIGHT_ARM_GONE);
                         events.ScheduleEvent(EVENT_RESTORE_ARM_RIGHT, 50000);
@@ -539,7 +539,7 @@ public:
                     if (Creature* cr = ObjectAccessor::GetCreature(*me, instance->GetGuidData(TYPE_KOLOGARN)))
                     {
                         _combatStarted = true;
-                        if (!cr->IsInCombat() && who)
+                        if (!cr->IsEngaged() && who)
                             cr->AI()->AttackStart(who);
                     }
 

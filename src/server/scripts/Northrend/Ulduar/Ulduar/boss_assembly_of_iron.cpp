@@ -260,7 +260,7 @@ public:
 
             for (uint8 i = 0; i < 3; ++i)
                 if (Creature* boss = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_STEELBREAKER + i)))
-                    if (!boss->IsInCombat())
+                    if (!boss->IsEngaged())
                         boss->AI()->AttackStart(who);
         }
 
@@ -372,7 +372,7 @@ public:
 
     bool Execute(uint64 /*eventTime*/, uint32 /*diff*/) override
     {
-        if (!_owner.IsInCombat())
+        if (!_owner.IsEngaged())
             _owner.CastSpell(&_owner, SPELL_RUNE_OF_POWER_OOC_CHANNEL, true);
         return true;
     }
@@ -437,7 +437,7 @@ public:
 
             for (uint8 i = 0; i < 3; ++i)
                 if (Creature* boss = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_STEELBREAKER + i)))
-                    if (!boss->IsInCombat())
+                    if (!boss->IsEngaged())
                         boss->AI()->AttackStart(who);
         }
 
@@ -656,7 +656,7 @@ public:
 
             for (uint8 i = 0; i < 3; ++i)
                 if (Creature* boss = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_STEELBREAKER + i)))
-                    if (!boss->IsInCombat())
+                    if (!boss->IsEngaged())
                         boss->AI()->AttackStart(who);
         }
 
@@ -739,7 +739,7 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (!me->IsInCombat() && me->GetReactState() == REACT_AGGRESSIVE)
+            if (!me->IsEngaged() && me->GetReactState() == REACT_AGGRESSIVE)
             {
                 _channelTimer += diff;
                 if (_channelTimer >= 10000)

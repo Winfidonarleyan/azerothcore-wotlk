@@ -85,7 +85,7 @@ public:
             GetCreatureListWithEntryInGrid(nearbyWhelps, me, NPC_ROOKERY_WHELP, RANGE_WHELP_CALL_HELP);
             for (const auto& whelp : nearbyWhelps)
             {
-                if (!whelp->IsInCombat())
+                if (!whelp->IsEngaged())
                 {
                     whelp->SetInCombatWith(me->GetVictim());
                     whelp->AI()->AttackStart(me->GetVictim());

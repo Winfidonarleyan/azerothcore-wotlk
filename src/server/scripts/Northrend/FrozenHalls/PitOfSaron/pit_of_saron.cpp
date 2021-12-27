@@ -129,13 +129,13 @@ public:
                         Creature* n2 = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_NECROLYTE_2_GUID));
                         if (n1 && n2)
                         {
-                            if (!n1->IsInCombat() && n1->IsAlive())
+                            if (!n1->IsEngaged() && n1->IsAlive())
                             {
                                 n1->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
                                 n1->GetMotionMaster()->MovePoint(1, NecrolytePos1);
                                 n1->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_READY1H);
                             }
-                            if (!n2->IsInCombat() && n2->IsAlive())
+                            if (!n2->IsEngaged() && n2->IsAlive())
                             {
                                 n2->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
                                 n2->GetMotionMaster()->MovePoint(1, NecrolytePos2);

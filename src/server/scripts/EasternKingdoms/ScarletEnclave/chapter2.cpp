@@ -450,7 +450,7 @@ public:
 
         void UpdateAI(uint32 diff) override
         {
-            if (uiStage && !me->IsInCombat())
+            if (uiStage && !me->IsEngaged())
             {
                 if (uiStage_timer <= diff)
                 {

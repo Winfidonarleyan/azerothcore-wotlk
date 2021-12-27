@@ -622,7 +622,7 @@ public:
                 return;
             }
 
-            if (Precious()->IsInCombat())
+            if (Precious()->IsEngaged())
             {
                 // If Simone corpse is removed but pet is InCombat, EnterEvadeMode and auto despawn on pet reaching home
                 PreciousAI()->EnterEvadeMode();
@@ -696,7 +696,7 @@ public:
                     break;
                 // Prevent hunters from figthing Simone alone
                 case SIMONE_EVENT_CHECK_PET_STATE:
-                    if (!me->IsInCombat() && !me->IsInEvadeMode())
+                    if (!me->IsEngaged() && !me->IsInEvadeMode())
                     {
                         if (Precious() && Precious()->isDead())
                         {
@@ -849,7 +849,7 @@ public:
             // Workaround for increasing the Summoned Guardian damage by using the template modifier value
             summon->Unit::UpdateDamagePhysical(BASE_ATTACK);
 
-            if (me->IsInCombat())
+            if (me->IsEngaged())
             {
                 summon->AI()->AttackStart(me->GetVictim());
             }

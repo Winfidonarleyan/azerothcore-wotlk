@@ -304,7 +304,7 @@ public:
             Map::PlayerList const& pl = me->GetMap()->GetPlayers();
             for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
                 if (Player* plr = itr->GetSource())
-                    if (!plr->IsGameMaster() && plr->IsInCombat() /*performance*/)
+                    if (!plr->IsGameMaster() && plr->IsEngaged() /*performance*/)
                     {
                         for (uint8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i) // loop through equipped items
                             if (Item* item = plr->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
@@ -430,7 +430,7 @@ public:
                     events.ScheduleEvent(EVENT_DESPAWN_ALGALON_1, 5000);
                     events.ScheduleEvent(EVENT_DESPAWN_ALGALON_2, 17000);
                     events.ScheduleEvent(EVENT_DESPAWN_ALGALON_3, 26000);
-                    if (me->IsInCombat())
+                    if (me->IsEngaged())
                         events.ScheduleEvent(EVENT_DESPAWN_ALGALON_4, 26000);
                     events.ScheduleEvent(EVENT_DESPAWN_ALGALON_5, 32000);
                     me->DespawnOrUnsummon(39000);

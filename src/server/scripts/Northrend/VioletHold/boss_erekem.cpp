@@ -99,10 +99,10 @@ public:
                 events.RescheduleEvent(EVENT_SPELL_STORMSTRIKE, 3000);
 
             if (Creature* c = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_EREKEM_GUARD_1_GUID)))
-                if (!c->IsInCombat())
+                if (!c->IsEngaged())
                     c->AI()->AttackStart(who);
             if (Creature* c = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_EREKEM_GUARD_2_GUID)))
-                if (!c->IsInCombat())
+                if (!c->IsEngaged())
                     c->AI()->AttackStart(who);
         }
 
@@ -266,7 +266,7 @@ public:
             events.RescheduleEvent(EVENT_SPELL_STRIKE, urand(4000, 8000));
 
             if (Creature* c = pInstance->instance->GetCreature(pInstance->GetGuidData(DATA_EREKEM_GUID)))
-                if (!c->IsInCombat())
+                if (!c->IsEngaged())
                     c->AI()->AttackStart(who);
         }
 
