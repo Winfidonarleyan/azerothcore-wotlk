@@ -90,14 +90,14 @@ bool UnitAI::DoSpellAttackIfReady(uint32 spell)
     return false;
 }
 
-Unit* UnitAI::SelectTarget(SelectTargetMethod targetType, uint32 position, float dist, bool playerOnly, int32 aura)
+Unit* UnitAI::SelectTarget(SelectTargetMethod targetType, uint32 position, float dist, bool playerOnly, bool withTank, int32 aura)
 {
-    return SelectTarget(targetType, position, DefaultTargetSelector(me, dist, playerOnly, aura));
+    return SelectTarget(targetType, position, DefaultTargetSelector(me, dist, playerOnly, withTank, aura));
 }
 
-void UnitAI::SelectTargetList(std::list<Unit*>& targetList, uint32 num, SelectTargetMethod targetType, float dist, bool playerOnly, int32 aura)
+void UnitAI::SelectTargetList(std::list<Unit*>& targetList, uint32 num, SelectTargetMethod targetType, uint32 offset, float dist, bool playerOnly, bool withTank, int32 aura)
 {
-    SelectTargetList(targetList, DefaultTargetSelector(me, dist, playerOnly, aura), num, targetType);
+    SelectTargetList(targetList, num, targetType, offset, DefaultTargetSelector(me, dist, playerOnly, withTank, aura));
 }
 
 float UnitAI::DoGetSpellMaxRange(uint32 spellId, bool positive)
@@ -110,7 +110,7 @@ void UnitAI::DoAddAuraToAllHostilePlayers(uint32 spellid)
 {
     if (me->IsInCombat())
     {
-        ThreatContainer::StorageType threatlist = me->getThreatMgr().getThreatList();
+        ThreatContainer::StorageType threatlist = me->GetThreatMgr().getThreatList();
         for (ThreatContainer::StorageType::const_iterator itr = threatlist.begin(); itr != threatlist.end(); ++itr)
         {
             if (Unit* unit = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid()))
@@ -124,7 +124,7 @@ void UnitAI::DoCastToAllHostilePlayers(uint32 spellid, bool triggered)
 {
     if (me->IsInCombat())
     {
-        ThreatContainer::StorageType threatlist = me->getThreatMgr().getThreatList();
+        ThreatContainer::StorageType threatlist = me->GetThreatMgr().getThreatList();
         for (ThreatContainer::StorageType::const_iterator itr = threatlist.begin(); itr != threatlist.end(); ++itr)
         {
             if (Unit* unit = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid()))
@@ -167,7 +167,7 @@ void UnitAI::DoCast(uint32 spellId)
                 bool playerOnly = spellInfo->HasAttribute(SPELL_ATTR3_ONLY_ON_PLAYER);
                 float range = spellInfo->GetMaxRange(false);
 
-                DefaultTargetSelector targetSelector(me, range, playerOnly, -(int32)spellId);
+                DefaultTargetSelector targetSelector(me, range, playerOnly, true, -(int32)spellId);
                 if (!(spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_VICTIM)
                         && targetSelector(me->GetVictim()))
                     target = me->GetVictim();
@@ -271,6 +271,16 @@ void UnitAI::FillAISpellInfo()
     }
 }
 
+ThreatMgr& UnitAI::GetThreatMgr()
+{
+    return me->GetThreatMgr();
+}
+
+void UnitAI::SortByDistance(std::list<Unit*>& list, bool ascending)
+{
+    list.sort(Acore::ObjectDistanceOrderPred(me, ascending));
+}
+
 //Enable PlayerAI when charmed
 void PlayerAI::OnCharmed(bool apply)
 {
@@ -305,6 +315,50 @@ SpellTargetSelector::SpellTargetSelector(Unit* caster, uint32 spellId) :
     _caster(caster), _spellInfo(sSpellMgr->GetSpellForDifficultyFromSpell(sSpellMgr->GetSpellInfo(spellId), caster))
 {
     ASSERT(_spellInfo);
+}
+
+DefaultTargetSelector::DefaultTargetSelector(Unit const* unit, float dist, bool playerOnly, bool withTank, int32 aura)
+    : _me(unit),
+    _dist(dist),
+    _playerOnly(playerOnly),
+    _exception(withTank ? unit->GetThreatMgr().GetCurrentVictim() : nullptr),
+    _aura(aura) { }
+
+bool DefaultTargetSelector::operator()(Unit const* target) const
+{
+    if (!_me)
+        return false;
+
+    if (!target)
+        return false;
+
+    if (_exception && target == _exception)
+        return false;
+
+    if (_playerOnly && (target->GetTypeId() != TYPEID_PLAYER))
+        return false;
+
+    if (_dist > 0.0f && !_me->IsWithinCombatRange(target, _dist))
+        return false;
+
+    if (_dist < 0.0f && _me->IsWithinCombatRange(target, -_dist))
+        return false;
+
+    if (_aura)
+    {
+        if (_aura > 0)
+        {
+            if (!target->HasAura(_aura))
+                return false;
+        }
+        else
+        {
+            if (target->HasAura(-_aura))
+                return false;
+        }
+    }
+
+    return true;
 }
 
 bool SpellTargetSelector::operator()(Unit const* target) const
@@ -351,5 +405,45 @@ bool NonTankTargetSelector::operator()(Unit const* target) const
     if (_playerOnly && target->GetTypeId() != TYPEID_PLAYER)
         return false;
 
+    if (Unit* currentVictim = _source->GetThreatMgr().GetCurrentVictim())
+        return target != currentVictim;
+
     return target != _source->GetVictim();
+}
+
+bool PowerUsersSelector::operator()(Unit const* target) const
+{
+    if (!_me || !target)
+        return false;
+
+    if (target->getPowerType() != _power)
+        return false;
+
+    if (_playerOnly && target->GetTypeId() != TYPEID_PLAYER)
+        return false;
+
+    if (_dist > 0.0f && !_me->IsWithinCombatRange(target, _dist))
+        return false;
+
+    if (_dist < 0.0f && _me->IsWithinCombatRange(target, -_dist))
+        return false;
+
+    return true;
+}
+
+bool FarthestTargetSelector::operator()(Unit const* target) const
+{
+    if (!_me || !target)
+        return false;
+
+    if (_playerOnly && target->GetTypeId() != TYPEID_PLAYER)
+        return false;
+
+    if (_dist > 0.0f && !_me->IsWithinCombatRange(target, _dist))
+        return false;
+
+    if (_inLos && !_me->IsWithinLOSInMap(target))
+        return false;
+
+    return true;
 }

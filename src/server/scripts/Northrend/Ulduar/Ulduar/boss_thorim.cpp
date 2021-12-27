@@ -1155,7 +1155,7 @@ public:
                         }
                     }
                 _playerAttack = true;
-                me->getThreatMgr().resetAllAggro();
+                me->GetThreatMgr().resetAllAggro();
                 me->CallForHelp(40.0f);
                 AttackStart(who);
             }

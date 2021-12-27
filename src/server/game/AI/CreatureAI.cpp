@@ -130,16 +130,8 @@ void CreatureAI::DoZoneInCombat(Creature* creature /*= nullptr*/, float maxRange
 
             if (creature->CanHaveThreatList())
             {
-                creature->AddThreat(player, 0.0f);
+                creature->GetThreatMgr().AddThreat(player, 0.0f, nullptr, true, true);
             }
-
-            /* Causes certain things to never leave the threat list (Priest Lightwell, etc):
-            for (Unit::ControlSet::const_iterator itr = player->m_Controlled.begin(); itr != player->m_Controlled.end(); ++itr)
-            {
-                creature->SetInCombatWith(*itr);
-                (*itr)->SetInCombatWith(creature);
-                creature->AddThreat(*itr, 0.0f);
-            }*/
         }
     }
 }
@@ -159,7 +151,7 @@ void CreatureAI::MoveInLineOfSight_Safe(Unit* who)
 
 void CreatureAI::MoveInLineOfSight(Unit* who)
 {
-    if (me->GetVictim())
+    if (me->IsEngaged())
         return;
 
     // pussywizard: civilian, non-combat pet or any other NOT HOSTILE TO ANYONE (!)
@@ -170,7 +162,7 @@ void CreatureAI::MoveInLineOfSight(Unit* who)
             return;
 
     if (me->HasReactState(REACT_AGGRESSIVE) && me->CanStartAttack(who))
-        AttackStart(who);
+        me->EngageWithTarget(who);
 }
 
 // Distract creature, if player gets too close while stealthed/prowling
@@ -179,8 +171,8 @@ void CreatureAI::TriggerAlert(Unit const* who) const
     // If there's no target, or target isn't a player do nothing
     if (!who || who->GetTypeId() != TYPEID_PLAYER)
         return;
-    // If this unit isn't an NPC, is already distracted, is in combat, is confused, stunned or fleeing, do nothing
-    if (me->GetTypeId() != TYPEID_UNIT || me->IsInCombat() || me->HasUnitState(UNIT_STATE_CONFUSED | UNIT_STATE_STUNNED | UNIT_STATE_FLEEING | UNIT_STATE_DISTRACTED))
+    // If this unit isn't an NPC, is already distracted, is fighting, is confused, stunned or fleeing, do nothing
+    if (me->GetTypeId() != TYPEID_UNIT || me->IsEngaged() || me->HasUnitState(UNIT_STATE_CONFUSED | UNIT_STATE_STUNNED | UNIT_STATE_FLEEING | UNIT_STATE_DISTRACTED))
         return;
     // Only alert for hostiles!
     if (me->IsCivilian() || me->HasReactState(REACT_PASSIVE) || !me->IsHostileTo(who) || !me->_IsTargetAcceptable(who))
@@ -253,7 +245,7 @@ void CreatureAI::SetGazeOn(Unit* target)
 
 bool CreatureAI::UpdateVictimWithGaze()
 {
-    if (!me->IsInCombat())
+    if (!me->IsEngaged())
         return false;
 
     if (me->HasReactState(REACT_PASSIVE))
@@ -271,7 +263,7 @@ bool CreatureAI::UpdateVictimWithGaze()
 
 bool CreatureAI::UpdateVictim()
 {
-    if (!me->IsInCombat())
+    if (!me->IsEngaged())
         return false;
 
     if (!me->HasReactState(REACT_PASSIVE))
@@ -283,7 +275,7 @@ bool CreatureAI::UpdateVictim()
     // xinef: if we have any victim, just return true
     else if (me->GetVictim() && me->GetExactDist(me->GetVictim()) < 30.0f)
         return true;
-    else if (me->getThreatMgr().isThreatListEmpty())
+    else if (me->GetThreatMgr().IsThreatListEmpty())
     {
         EnterEvadeMode();
         return false;
@@ -305,7 +297,7 @@ bool CreatureAI::_EnterEvadeMode()
 
     me->ClearComboPointHolders(); // Remove all combo points targeting this unit
     // sometimes bosses stuck in combat?
-    me->DeleteThreatList();
+    me->GetThreatMgr().ClearAllThreat();
     me->CombatStop(true);
     me->LoadCreaturesAddon(true);
     me->SetLootRecipient(nullptr);

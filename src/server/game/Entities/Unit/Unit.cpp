@@ -417,7 +417,7 @@ void Unit::Update(uint32 p_time)
 
     _UpdateSpells( p_time );
 
-    if (CanHaveThreatList() && getThreatMgr().isNeedUpdateToClient(p_time))
+    if (CanHaveThreatList() && GetThreatMgr().isNeedUpdateToClient(p_time))
         SendThreatListUpdate();
 
     // update combat timer only for players and pets (only pets with PetAI)
@@ -8825,7 +8825,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, uint32 damage, AuraEffect* trigg
                             return false;
 
                         if (victim && victim->IsAlive())
-                            victim->getThreatMgr().modifyThreatPercent(this, -10);
+                            victim->GetThreatMgr().modifyThreatPercent(this, -10);
 
                         basepoints0 = int32(CountPctFromMaxHealth(triggerAmount));
                         trigger_spell_id = 31616;
@@ -13787,7 +13787,7 @@ void Unit::setDeathState(DeathState s, bool despawn)
     if (s != ALIVE && s != JUST_RESPAWNED)
     {
         CombatStop();
-        DeleteThreatList();
+        GetThreatMgr().ClearAllThreat();
         getHostileRefMgr().deleteReferences();
         ClearComboPointHolders();                           // any combo points pointed to unit lost at it death
 
@@ -13890,7 +13890,7 @@ void Unit::AddThreat(Unit* victim, float fThreat, SpellSchoolMask schoolMask, Sp
 
 void Unit::DeleteThreatList()
 {
-    if (CanHaveThreatList() && !m_ThreatMgr.isThreatListEmpty())
+    if (CanHaveThreatList() && !m_ThreatMgr.IsThreatListEmpty())
         SendClearThreatListOpcode();
     m_ThreatMgr.clearReferences();
 }
@@ -13944,7 +13944,7 @@ void Unit::TauntFadeOut(Unit* taunter)
     if (!target || target != taunter)
         return;
 
-    if (m_ThreatMgr.isThreatListEmpty())
+    if (m_ThreatMgr.IsThreatListEmpty())
     {
         if (creature->IsAIEnabled)
             creature->AI()->EnterEvadeMode();
@@ -13984,8 +13984,8 @@ Unit* Creature::SelectVictim()
 
     if (CanHaveThreatList())
     {
-        if (!target && !m_ThreatMgr.isThreatListEmpty())
-            target = m_ThreatMgr.getHostilTarget();
+        if (!target && !m_ThreatMgr.IsThreatListEmpty())
+            target = m_ThreatMgr.GetAnyTarget();
     }
     else if (!HasReactState(REACT_PASSIVE))
     {
@@ -14948,7 +14948,7 @@ void Unit::CleanupBeforeRemoveFromMap(bool finalCleanup)
     m_Events.KillAllEvents(false);                      // non-delatable (currently casted spells) will not deleted now but it will deleted at call in Map::RemoveAllObjectsInRemoveList
     CombatStop();
     ClearComboPointHolders();
-    DeleteThreatList();
+    GetThreatMgr().ClearAllThreat();
     getHostileRefMgr().deleteReferences();
     GetMotionMaster()->Clear(false);                    // remove different non-standard movement generators.
 }
@@ -17168,7 +17168,7 @@ void Unit::Kill(Unit* killer, Unit* victim, bool durabilityLoss, WeaponAttackTyp
 
         if (!creature->IsPet() && creature->GetLootMode() > 0)
         {
-            creature->DeleteThreatList();
+            creature->GetThreatMgr().ClearAllThreat();
 
             // must be after setDeathState which resets dynamic flags
             if (!creature->loot.isLooted())
@@ -18266,8 +18266,8 @@ void Unit::SetPhaseMask(uint32 newPhaseMask, bool update)
             // modify threat lists for new phasemask
             if (GetTypeId() != TYPEID_PLAYER)
             {
-                ThreatContainer::StorageType threatList = getThreatMgr().getThreatList();
-                ThreatContainer::StorageType offlineThreatList = getThreatMgr().getOfflineThreatList();
+                ThreatContainer::StorageType threatList = GetThreatMgr().getThreatList();
+                ThreatContainer::StorageType offlineThreatList = GetThreatMgr().getOfflineThreatList();
 
                 // merge expects sorted lists
                 threatList.sort();
@@ -19206,15 +19206,15 @@ void Unit::UpdateHeight(float newZ)
 
 void Unit::SendThreatListUpdate()
 {
-    if (!getThreatMgr().isThreatListEmpty())
+    if (!GetThreatMgr().IsThreatListEmpty())
     {
-        uint32 count = getThreatMgr().getThreatList().size();
+        uint32 count = GetThreatMgr().getThreatList().size();
 
         //LOG_DEBUG("entities.unit", "WORLD: Send SMSG_THREAT_UPDATE Message");
         WorldPacket data(SMSG_THREAT_UPDATE, 8 + count * 8);
         data << GetPackGUID();
         data << uint32(count);
-        ThreatContainer::StorageType const& tlist = getThreatMgr().getThreatList();
+        ThreatContainer::StorageType const& tlist = GetThreatMgr().getThreatList();
         for (ThreatContainer::StorageType::const_iterator itr = tlist.begin(); itr != tlist.end(); ++itr)
         {
             data << (*itr)->getUnitGuid().WriteAsPacked();
@@ -19226,16 +19226,16 @@ void Unit::SendThreatListUpdate()
 
 void Unit::SendChangeCurrentVictimOpcode(HostileReference* pHostileReference)
 {
-    if (!getThreatMgr().isThreatListEmpty())
+    if (!GetThreatMgr().IsThreatListEmpty())
     {
-        uint32 count = getThreatMgr().getThreatList().size();
+        uint32 count = GetThreatMgr().getThreatList().size();
 
         LOG_DEBUG("entities.unit", "WORLD: Send SMSG_HIGHEST_THREAT_UPDATE Message");
         WorldPacket data(SMSG_HIGHEST_THREAT_UPDATE, 8 + 8 + count * 8);
         data << GetPackGUID();
         data << pHostileReference->getUnitGuid().WriteAsPacked();
         data << uint32(count);
-        ThreatContainer::StorageType const& tlist = getThreatMgr().getThreatList();
+        ThreatContainer::StorageType const& tlist = GetThreatMgr().getThreatList();
         for (ThreatContainer::StorageType::const_iterator itr = tlist.begin(); itr != tlist.end(); ++itr)
         {
             data << (*itr)->getUnitGuid().WriteAsPacked();

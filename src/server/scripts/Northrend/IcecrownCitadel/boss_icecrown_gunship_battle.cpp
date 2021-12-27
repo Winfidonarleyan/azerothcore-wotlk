@@ -783,7 +783,7 @@ public:
         {
             if (!me->IsAlive())
                 return;
-            me->DeleteThreatList();
+            me->GetThreatMgr().ClearAllThreat();
             me->CombatStop(true);
             me->GetMotionMaster()->MoveTargetedHome();
             Reset();
@@ -1119,7 +1119,7 @@ public:
         {
             if (!me->IsAlive())
                 return;
-            me->DeleteThreatList();
+            me->GetThreatMgr().ClearAllThreat();
             me->CombatStop(true);
             me->GetMotionMaster()->MoveTargetedHome();
             Reset();
@@ -1495,7 +1495,7 @@ struct gunship_npc_AI : public ScriptedAI
     {
         if (!me->IsAlive() || !me->IsInCombat())
             return;
-        me->DeleteThreatList();
+        me->GetThreatMgr().ClearAllThreat();
         me->CombatStop(true);
         me->GetMotionMaster()->MoveTargetedHome();
         Reset();
@@ -1556,7 +1556,7 @@ struct npc_gunship_boarding_addAI : public ScriptedAI
     {
         if (!me->IsAlive() || !me->IsInCombat())
             return;
-        me->DeleteThreatList();
+        me->GetThreatMgr().ClearAllThreat();
         me->CombatStop(true);
         me->GetMotionMaster()->MoveTargetedHome();
         Reset();

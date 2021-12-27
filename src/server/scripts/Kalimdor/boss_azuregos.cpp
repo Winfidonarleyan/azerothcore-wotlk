@@ -89,7 +89,7 @@ public:
             if (TeleportTimer <= diff)
             {
                 Talk(SAY_TELEPORT);
-                ThreatContainer::StorageType threatlist = me->getThreatMgr().getThreatList();
+                ThreatContainer::StorageType threatlist = me->GetThreatMgr().getThreatList();
                 for (auto i = threatlist.begin(); i != threatlist.end(); ++i)
                 {
                     Unit* unit = ObjectAccessor::GetUnit(*me, (*i)->getUnitGuid());

@@ -205,7 +205,7 @@ public:
         void EnterEvadeMode() override
         {
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatMgr().ClearAllThreat();
             me->CombatStop(true);
             me->LoadCreaturesAddon(true);
             if (me->IsAlive())

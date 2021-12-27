@@ -155,7 +155,7 @@ public:
                     me->SetFaction(FACTION_FRIENDLY);
                     events.Reset();
                     Talk(TEXT_EADRIC_DEATH);
-                    me->getThreatMgr().clearReferences();
+                    me->GetThreatMgr().clearReferences();
                     me->SetRegeneratingHealth(false);
                     _EnterEvadeMode();
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -302,7 +302,7 @@ public:
                     me->SetFaction(FACTION_FRIENDLY);
                     events.Reset();
                     Talk(TEXT_PALETRESS_DEATH);
-                    me->getThreatMgr().clearReferences();
+                    me->GetThreatMgr().clearReferences();
                     me->SetRegeneratingHealth(false);
                     _EnterEvadeMode();
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);

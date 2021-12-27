@@ -215,7 +215,7 @@ public:
         void DoFriend()
         {
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatMgr().ClearAllThreat();
             me->CombatStop(true);
 
             me->StopMoving();

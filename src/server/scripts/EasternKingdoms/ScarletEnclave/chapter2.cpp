@@ -242,7 +242,7 @@ public:
 
         void EnterEvadeMode() override
         {
-            me->DeleteThreatList();
+            me->GetThreatMgr().ClearAllThreat();
             me->CombatStop(false);
             me->SetLootRecipient(nullptr);
 
