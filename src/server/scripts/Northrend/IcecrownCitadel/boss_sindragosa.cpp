@@ -1951,7 +1951,7 @@ public:
         void HandleScript(SpellEffIndex effIndex)
         {
             PreventHitDefaultEffect(effIndex);
-            GetCaster()->AddThreat(GetHitUnit(), float(GetEffectValue()));
+            GetCaster()->GetThreatMgr().AddThreat(GetHitUnit(), float(GetEffectValue()));
             GetCaster()->GetAI()->SetData(DATA_WHELP_MARKER, 1);
         }
 
@@ -1970,7 +1970,7 @@ public:
             PreventDefaultAction();
             if (Unit* caster = GetCaster())
             {
-                caster->AddThreat(GetTarget(), -float(GetSpellInfo()->Effects[EFFECT_1].CalcValue()));
+                caster->GetThreatMgr().AddThreat(GetTarget(), -float(GetSpellInfo()->Effects[EFFECT_1].CalcValue()));
                 caster->GetAI()->SetData(DATA_WHELP_MARKER, 0);
             }
         }

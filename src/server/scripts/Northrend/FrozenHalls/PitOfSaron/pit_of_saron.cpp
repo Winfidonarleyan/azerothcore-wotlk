@@ -1074,10 +1074,9 @@ public:
                                 {
                                     if (s->GetEntry() == NPC_FALLEN_WARRIOR)
                                         continue;
-                                    c->SetInCombatWith(s);
-                                    s->SetInCombatWith(c);
-                                    c->AddThreat(s, 0.0f);
-                                    s->AddThreat(c, 0.0f);
+
+                                    c->EngageWithTarget(s);
+                                    s->EngageWithTarget(c);
                                 }
                         }
                     events.RescheduleEvent(10, 3000);

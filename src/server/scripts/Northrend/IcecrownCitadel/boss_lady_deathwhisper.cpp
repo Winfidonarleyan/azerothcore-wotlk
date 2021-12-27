@@ -304,7 +304,7 @@ public:
                 {
                     Unit* unit = ObjectAccessor::GetUnit((*me), (*itr)->getUnitGuid());
 
-                    if (unit && DoGetThreat(unit))
+                    if (unit && GetThreat(unit))
                         DoModifyThreatPercent(unit, -100);
                 }
 
@@ -931,7 +931,7 @@ public:
             if (!targetGUID)
             {
                 me->GetThreatMgr().resetAllAggro();
-                me->AddThreat(who, 1000000.0f);
+                me->GetThreatMgr().AddThreat(who, 1000000.0f);
                 targetGUID = who->GetGUID();
             }
         }

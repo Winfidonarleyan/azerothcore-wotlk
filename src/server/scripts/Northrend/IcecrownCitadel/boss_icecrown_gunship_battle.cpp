@@ -902,9 +902,7 @@ public:
                         if (Player* p = itr->GetSource())
                             if (CanAIAttack(p) && me->IsValidAttackTarget(p))
                             {
-                                me->SetInCombatWith(p);
-                                p->SetInCombatWith(me);
-                                me->AddThreat(p, 0.0f);
+                                me->EngageWithTarget(p);
                             }
                 }
                 else
@@ -1238,9 +1236,7 @@ public:
                         if (Player* p = itr->GetSource())
                             if (CanAIAttack(p) && me->IsValidAttackTarget(p))
                             {
-                                me->SetInCombatWith(p);
-                                p->SetInCombatWith(me);
-                                me->AddThreat(p, 0.0f);
+                                me->EngageWithTarget(p);
                             }
                 }
                 else
@@ -1617,9 +1613,7 @@ struct npc_gunship_boarding_addAI : public ScriptedAI
                     if (CanAIAttack(p) && me->IsValidAttackTarget(p))
                     {
                         anyValid = true;
-                        me->SetInCombatWith(p);
-                        p->SetInCombatWith(me);
-                        me->AddThreat(p, 0.0f);
+                        me->EngageWithTarget(p);
                     }
         }
         else
@@ -1780,7 +1774,7 @@ public:
                         if (Player* player = me->SelectNearestPlayer(50.0f))
                         {
                             me->SetInCombatWithZone();
-                            me->AddThreat(player, 1.0f);
+                            me->GetThreatMgr().AddThreat(player, 1.0f);
                         }
                         me->CastSpell((Unit*)nullptr, SPELL_BELOW_ZERO, false);
                         break;
@@ -1859,9 +1853,7 @@ public:
                         if (CanAIAttack(p) && me->IsValidAttackTarget(p))
                         {
                             anyValid = true;
-                            me->SetInCombatWith(p);
-                            p->SetInCombatWith(me);
-                            me->AddThreat(p, 0.0f);
+                            me->EngageWithTarget(p);
                         }
             }
             else

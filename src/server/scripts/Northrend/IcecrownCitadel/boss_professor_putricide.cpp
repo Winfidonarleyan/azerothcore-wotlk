@@ -1142,7 +1142,7 @@ public:
             GetCaster()->GetThreatMgr().ClearAllThreat();
             GetCaster()->ToCreature()->SetInCombatWithZone();
             GetCaster()->ToCreature()->AI()->AttackStart(GetHitUnit());
-            GetCaster()->AddThreat(GetHitUnit(), 500000000.0f);    // value seen in sniff
+            GetCaster()->GetThreatMgr().AddThreat(GetHitUnit(), 500000000.0f);    // value seen in sniff
             if (Creature* c = GetCaster()->ToCreature())
                 c->AI()->SetGUID(GetHitUnit()->GetGUID(), -1);
         }

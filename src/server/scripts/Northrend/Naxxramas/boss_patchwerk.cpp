@@ -140,7 +140,7 @@ public:
                             // and add threat to most hated
                             if (counter < RAID_MODE(2, 3))
                             {
-                                me->AddThreat(target, 500.0f);
+                                me->GetThreatMgr().AddThreat(target, 500.0f);
                             }
                         }
                         counter = 0;

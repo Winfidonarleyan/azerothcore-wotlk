@@ -446,7 +446,7 @@ public:
                 if (Creature* cr = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_THADDIUS_BOSS)))
                 {
                     cr->AI()->AttackStart(pWho);
-                    cr->AddThreat(pWho, 10.0f);
+                    cr->GetThreatMgr().AddThreat(pWho, 10.0f);
                 }
             }
         }
@@ -558,13 +558,13 @@ public:
                             Unit* tankFeugen = feugen->GetVictim();
                             Unit* tankStalagg = me->GetVictim();
 
-                            feugen->GetThreatMgr().modifyThreatPercent(tankFeugen, -100);
-                            feugen->AddThreat(tankStalagg, threatFeugen);
+                            feugen->GetThreatMgr().ModifyThreatByPercent(tankFeugen, -100);
+                            feugen->GetThreatMgr().AddThreat(tankStalagg, threatFeugen);
                             feugen->CastSpell(tankStalagg, SPELL_MAGNETIC_PULL, true);
                             feugen->AI()->DoAction(ACTION_MAGNETIC_PULL);
 
-                            me->GetThreatMgr().modifyThreatPercent(tankStalagg, -100);
-                            me->AddThreat(tankFeugen, threatStalagg);
+                            me->GetThreatMgr().ModifyThreatByPercent(tankStalagg, -100);
+                            me->GetThreatMgr().AddThreat(tankFeugen, threatStalagg);
                             me->CastSpell(tankFeugen, SPELL_MAGNETIC_PULL, true);
                             DoAction(ACTION_MAGNETIC_PULL);
                         }

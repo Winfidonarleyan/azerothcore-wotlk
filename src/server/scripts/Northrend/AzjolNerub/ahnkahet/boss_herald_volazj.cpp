@@ -412,9 +412,7 @@ class spell_herald_volzaj_insanity : public SpellScript
 
                 if (Unit* summon = caster->SummonCreature(NPC_TWISTED_VISAGE, plrClone->GetPosition(), TEMPSUMMON_CORPSE_DESPAWN, 0))
                 {
-                    summon->AddThreat(plrTarget, 0.0f);
-                    summon->SetInCombatWith(plrTarget);
-                    plrTarget->SetInCombatWith(summon);
+                    summon->EngageWithTarget(plrTarget);
 
                     plrTarget->CastSpell(summon, SPELL_CLONE_PLAYER, true);
                     summon->SetPhaseMask(1 | (1 << (4 + insanityCounter)), true);

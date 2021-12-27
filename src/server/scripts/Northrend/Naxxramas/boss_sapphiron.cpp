@@ -150,9 +150,7 @@ public:
 
                     if (player->IsAlive() && me->GetDistance(player) < 80.0f)
                     {
-                        me->SetInCombatWith(player);
-                        player->SetInCombatWith(me);
-                        me->AddThreat(player, 0.0f);
+                        me->EngageWithTarget(player);
                     }
                 }
             }

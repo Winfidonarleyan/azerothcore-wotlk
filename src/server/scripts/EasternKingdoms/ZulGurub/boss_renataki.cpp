@@ -139,7 +139,7 @@ public:
                 {
                     Unit* target = SelectTarget(SelectTargetMethod::Random, 1);
 
-                    if (DoGetThreat(me->GetVictim()))
+                    if (GetThreat(me->GetVictim()))
                     {
                         DoModifyThreatPercent(me->GetVictim(), -50);
                     }

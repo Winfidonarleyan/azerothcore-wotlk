@@ -109,7 +109,7 @@ struct boss_faction_championsAI : public ScriptedAI
             if( pUnit && pUnit->GetTypeId() == TYPEID_PLAYER && me->GetThreatMgr().getThreat(pUnit) )
             {
                 float threatMod = GetThreatMod(me->GetDistance2d(pUnit), (float)pUnit->GetArmor(), pUnit->GetHealth(), pUnit->GetMaxHealth(), pUnit);
-                me->GetThreatMgr().modifyThreatPercent(pUnit, -100);
+                me->GetThreatMgr().ModifyThreatByPercent(pUnit, -100);
                 //me->GetThreatMgr().doAddThreat(pUnit, 10000000.0f * threatMod);
                 if (HostileReference* ref = me->GetThreatMgr().getOnlineContainer().getReferenceByTarget(pUnit))
                     ref->addThreat(10000000.0f * threatMod);

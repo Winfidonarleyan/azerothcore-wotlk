@@ -80,7 +80,7 @@ public:
         {
             events.CancelEventGroup(EVENT_GROUP_ABILITIES);
             events.ScheduleEvent(EVENT_SWITCH_PHASE, 60000);
-            DoResetThreat();
+            ResetThreatList();
 
             if (!run)
             {
@@ -167,8 +167,8 @@ public:
                 case EVENT_SWITCH_TARGET:
                     if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 100, true))
                     {
-                        DoResetThreat();
-                        me->AddThreat(target, 5000000.0f);
+                        ResetThreatList();
+                        me->GetThreatMgr().AddThreat(target, 5000000.0f);
                         Talk(EMOTE_NEW_TARGET);
                     }
                     events.ScheduleEvent(EVENT_SWITCH_TARGET, 10000, EVENT_GROUP_ABILITIES);

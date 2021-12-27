@@ -305,7 +305,7 @@ public:
                     if (Creature* creature = target->ToCreature())
                     {
                         creature->AI()->AttackStart(caster);
-                        creature->AddThreat(caster, 10000.0f);
+                        creature->GetThreatMgr().AddThreat(caster, 10000.0f);
                     }
         }
 

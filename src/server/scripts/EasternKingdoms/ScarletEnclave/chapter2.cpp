@@ -312,7 +312,7 @@ public:
             if (summoned->GetEntry() == NPC_HIGH_INQUISITOR_VALROTH)
                 m_uiValrothGUID = summoned->GetGUID();
 
-            summoned->AddThreat(me, 0.0f);
+            summoned->GetThreatMgr().AddThreat(me, 0.0f);
             summoned->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
             summons.Summon(summoned);
         }

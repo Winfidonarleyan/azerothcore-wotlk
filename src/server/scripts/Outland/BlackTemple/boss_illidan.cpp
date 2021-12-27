@@ -838,8 +838,8 @@ public:
             summon->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
             if (summon->GetEntry() == NPC_ILLIDARI_ELITE)
             {
-                me->AddThreat(summon, 1000000.0f);
-                summon->AddThreat(me, 1000000.0f);
+                me->GetThreatMgr().AddThreat(summon, 1000000.0f);
+                summon->GetThreatMgr().AddThreat(me, 1000000.0f);
                 summon->AI()->AttackStart(me);
                 AttackStart(summon);
             }

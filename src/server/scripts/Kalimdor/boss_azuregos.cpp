@@ -99,7 +99,7 @@ public:
                     }
                 }
 
-                DoResetThreat();
+                ResetThreatList();
                 TeleportTimer = 30000;
             }
             else TeleportTimer -= diff;

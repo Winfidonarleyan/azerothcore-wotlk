@@ -92,7 +92,7 @@ public:
                         {
                             _conflagrateTarget = me->GetVictim()->GetGUID();
                             _conflagrateThreat = me->GetThreatMgr().getThreat(me->GetVictim());
-                            me->GetThreatMgr().modifyThreatPercent(target, -100);
+                            me->GetThreatMgr().ModifyThreatByPercent(target, -100);
                         }
                         events.ScheduleEvent(EVENT_CONFLAGRATION, urand(10000, 13000));
                         events.ScheduleEvent(EVENT_CHECK_CONFLAGRATION_TARGET, 10000);

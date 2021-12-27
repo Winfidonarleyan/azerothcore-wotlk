@@ -369,7 +369,7 @@ SpellInfo const* ScriptedAI::SelectSpell(Unit* target, uint32 school, uint32 mec
 
 void ScriptedAI::DoResetThreat()
 {
-    if (!me->CanHaveThreatList() || me->GetThreatMgr().IsThreatListEmpty())
+    if (!me->IsThreatened())
     {
         LOG_ERROR("entities.unit.ai", "DoResetThreat called for creature that either cannot have threat list or has empty threat list (me entry = %d)", me->GetEntry());
         return;
@@ -389,7 +389,7 @@ void ScriptedAI::DoModifyThreatPercent(Unit* unit, int32 pct)
 {
     if (!unit)
         return;
-    me->GetThreatMgr().modifyThreatPercent(unit, pct);
+    me->GetThreatMgr().ModifyThreatByPercent(unit, pct);
 }
 
 void ScriptedAI::DoTeleportPlayer(Unit* unit, float x, float y, float z, float o)

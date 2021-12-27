@@ -3666,7 +3666,7 @@ void Spell::EffectThreat(SpellEffIndex /*effIndex*/)
     if (!unitTarget->CanHaveThreatList() || m_caster->IsFriendlyTo(unitTarget))
         return;
 
-    unitTarget->AddThreat(m_caster, float(damage));
+    unitTarget->GetThreatMgr().AddThreat(m_caster, float(damage));
 }
 
 void Spell::EffectHealMaxHealth(SpellEffIndex /*effIndex*/)
@@ -5506,7 +5506,7 @@ void Spell::EffectModifyThreatPercent(SpellEffIndex /*effIndex*/)
     if (!unitTarget)
         return;
 
-    unitTarget->GetThreatMgr().modifyThreatPercent(m_caster, damage);
+    unitTarget->GetThreatMgr().ModifyThreatByPercent(m_caster, damage);
 }
 
 void Spell::EffectTransmitted(SpellEffIndex effIndex)

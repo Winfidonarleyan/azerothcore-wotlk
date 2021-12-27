@@ -1788,7 +1788,7 @@ public:
                         if (Creature* warden = instance->SummonCreature(NPC_SPIRIT_WARDEN, SpiritWardenSpawn, nullptr, 65000))
                         {
                             terenas->AI()->AttackStart(warden);
-                            warden->AddThreat(terenas, 300000.0f);
+                            warden->GetThreatMgr().AddThreat(terenas, 300000.0f);
                         }
                     }
                     break;

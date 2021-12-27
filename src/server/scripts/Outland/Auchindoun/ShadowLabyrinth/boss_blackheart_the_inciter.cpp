@@ -124,7 +124,7 @@ public:
                                 me->CastSpell(target, SPELL_INCITE_CHAOS_B, true);
                         }
 
-                        DoResetThreat();
+                        ResetThreatList();
                         InciteChaos = true;
                         events.DelayEvents(15000);
                         events.RepeatEvent(40000);

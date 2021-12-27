@@ -193,7 +193,7 @@ public:
                 switchTimer = 0;
                 me->GetThreatMgr().resetAllAggro();
                 if (Player* player = SelectTargetFromPlayerList(100.0f))
-                    me->AddThreat(player, 100000.0f);
+                    me->GetThreatMgr().AddThreat(player, 100000.0f);
             }
         }
     };

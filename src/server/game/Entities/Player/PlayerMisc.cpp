@@ -20,6 +20,7 @@
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "WorldSession.h"
+#include "GridNotifiers.h"
 
 /*********************************************************/
 /***               FLOOD FILTER SYSTEM                 ***/
@@ -341,10 +342,54 @@ void Player::UpdateAfkReport(time_t currTime)
     }
 }
 
+void Player::SetContestedPvP(Player* attackedPlayer, bool lookForNearContestedGuards)
+{
+    if (attackedPlayer && (attackedPlayer == this || (duel && duel->Opponent == attackedPlayer)) || InBattleground())
+        return;
+
+    // check if there any guards that should care about the contested flag on player
+    if (lookForNearContestedGuards)
+    {
+        std::list<Unit*> targets;
+        Acore::NearestVisibleDetectableContestedGuardUnitCheck u_check(this);
+        Acore::UnitListSearcher<Acore::NearestVisibleDetectableContestedGuardUnitCheck> searcher(this, targets, u_check);
+        Cell::VisitAllObjects(this, searcher, MAX_AGGRO_RADIUS);
+
+        // return if there are no contested guards found
+        if (!targets.size())
+        {
+            return;
+        }
+    }
+
+    SetContestedPvPTimer(30000);
+    if (!HasUnitState(UNIT_STATE_ATTACK_PLAYER))
+    {
+        AddUnitState(UNIT_STATE_ATTACK_PLAYER);
+        SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP);
+        // call MoveInLineOfSight for nearby contested guards
+        AddToNotify(NOTIFY_AI_RELOCATION);
+
+        Acore::AIRelocationNotifier notifier(*this);
+        Cell::VisitWorldObjects(this, notifier, GetVisibilityRange());
+    }
+
+    for (Unit* unit : m_Controlled)
+    {
+        if (!unit->HasUnitState(UNIT_STATE_ATTACK_PLAYER))
+        {
+            unit->AddUnitState(UNIT_STATE_ATTACK_PLAYER);
+            Acore::AIRelocationNotifier notifier(*unit);
+            Cell::VisitWorldObjects(this, notifier, GetVisibilityRange());
+        }
+    }
+}
+
 void Player::UpdateContestedPvP(uint32 diff)
 {
     if (!m_contestedPvPTimer || IsEngaged())
         return;
+
     if (m_contestedPvPTimer <= diff)
     {
         ResetContestedPvP();

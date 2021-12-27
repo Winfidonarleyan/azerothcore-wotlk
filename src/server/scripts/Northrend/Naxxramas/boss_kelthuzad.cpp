@@ -597,7 +597,7 @@ public:
 
             if (me->GetEntry() != NPC_UNSTOPPABLE_ABOMINATION && me->GetEntry() != NPC_GUARDIAN_OF_ICECROWN)
             {
-                me->AddThreat(who, 1000000.0f);
+                me->GetThreatMgr().AddThreat(who, 1000000.0f);
             }
         }
 

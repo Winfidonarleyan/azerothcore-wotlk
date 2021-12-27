@@ -154,7 +154,7 @@ public:
                     {
                         DoCast(target, SPELL_ROOT);
 
-                        if (DoGetThreat(target))
+                        if (GetThreat(target))
                             DoModifyThreatPercent(target, -100);
 
                         switch (urand(0, 2))

@@ -1059,7 +1059,7 @@ public:
                         break;
                     case 4:
                         me->SetReactState(REACT_AGGRESSIVE);
-                        DoResetThreat();
+                        ResetThreatList();
                         Phase = 4;
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         if (Unit* target = SelectTargetFromPlayerList(75.0f))
@@ -1675,7 +1675,7 @@ public:
                         break;
                     case 4:
                         me->SetReactState(REACT_AGGRESSIVE);
-                        DoResetThreat();
+                        ResetThreatList();
                         Phase = 4;
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         if (Unit* target = SelectTargetFromPlayerList(75.0f))

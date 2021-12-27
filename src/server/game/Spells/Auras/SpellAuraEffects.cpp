@@ -5035,7 +5035,7 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                 case 1515:                                      // Tame beast
                     // FIX_ME: this is 2.0.12 threat effect replaced in 2.1.x by dummy aura, must be checked for correctness
                     if (caster && target->CanHaveThreatList())
-                        target->AddThreat(caster, 10.0f);
+                        target->GetThreatMgr().AddThreat(caster, 10.0f);
                     break;
                 case 13139:                                     // net-o-matic
                     // root to self part of (root_target->charge->root_self sequence
@@ -6477,7 +6477,7 @@ void AuraEffect::HandlePeriodicHealthLeechAuraTick(Unit* target, Unit* caster) c
 
     HealInfo healInfo(caster, caster, heal, GetSpellInfo(), GetSpellInfo()->GetSchoolMask());
     int32 gain = caster->HealBySpell(healInfo);
-    caster->getHostileRefMgr().threatAssist(caster, gain * 0.5f, GetSpellInfo());
+    caster->GetThreatMgr().ForwardThreatForAssistingMe(caster, float(gain) / 2, GetSpellInfo(), true);
 }
 
 void AuraEffect::HandlePeriodicHealthFunnelAuraTick(Unit* target, Unit* caster) const
@@ -6617,7 +6617,7 @@ void AuraEffect::HandlePeriodicHealAurasTick(Unit* target, Unit* caster) const
     target->SendPeriodicAuraLog(&pInfo);
 
     if (caster)
-        target->getHostileRefMgr().threatAssist(caster, float(gain) * 0.5f, GetSpellInfo());
+        target->GetThreatMgr().ForwardThreatForAssistingMe(caster, float(gain) / 2, GetSpellInfo());
 
     bool haveCastItem = GetBase()->GetCastItemGUID();
 
@@ -6700,10 +6700,8 @@ void AuraEffect::HandlePeriodicManaLeechAuraTick(Unit* target, Unit* caster) con
     if (gainAmount)
     {
         gainedAmount = caster->ModifyPower(PowerType, gainAmount);
-        target->AddThreat(caster, float(gainedAmount) * 0.5f, GetSpellInfo()->GetSchoolMask(), GetSpellInfo());
+        target->GetThreatMgr().AddThreat(caster, float(gainedAmount) * 0.5f, GetSpellInfo(), GetSpellInfo(), true);
     }
-
-    target->AddThreat(caster, float(gainedAmount) * 0.5f, GetSpellInfo()->GetSchoolMask(), GetSpellInfo());
 
     // remove CC auras
     target->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_TAKE_DAMAGE);
@@ -6755,7 +6753,7 @@ void AuraEffect::HandleObsModPowerAuraTick(Unit* target, Unit* caster) const
     int32 gain = target->ModifyPower(PowerType, amount);
 
     if (caster)
-        target->getHostileRefMgr().threatAssist(caster, float(gain) * 0.5f, GetSpellInfo());
+        target->GetThreatMgr().ForwardThreatForAssistingMe(caster, float(gain) / 2, GetSpellInfo(), true);
 }
 
 void AuraEffect::HandlePeriodicEnergizeAuraTick(Unit* target, Unit* caster) const
@@ -6789,7 +6787,7 @@ void AuraEffect::HandlePeriodicEnergizeAuraTick(Unit* target, Unit* caster) cons
     int32 gain = target->ModifyPower(PowerType, amount);
 
     if (caster)
-        target->getHostileRefMgr().threatAssist(caster, float(gain) * 0.5f, GetSpellInfo());
+        target->GetThreatMgr().ForwardThreatForAssistingMe(caster, float(gain) / 2, GetSpellInfo(), true);
 }
 
 void AuraEffect::HandlePeriodicPowerBurnAuraTick(Unit* target, Unit* caster) const

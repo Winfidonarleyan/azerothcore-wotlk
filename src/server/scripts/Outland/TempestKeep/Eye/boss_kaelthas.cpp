@@ -483,7 +483,7 @@ public:
                     events2.CancelEvent(EVENT_PREFIGHT_PHASE71);
                     Talk(SAY_PHASE4_INTRO2);
                     phase = PHASE_FINAL;
-                    DoResetThreat();
+                    ResetThreatList();
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_DISABLE_MOVE);
                     if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0))
                         AttackStart(target);

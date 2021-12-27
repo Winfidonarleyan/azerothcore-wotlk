@@ -226,7 +226,7 @@ public:
 
             // Xinef: acquire new target
             if (Unit* target = GetHitUnit())
-                GetCaster()->AddThreat(target, 1000000.0f);
+                GetCaster()->GetThreatMgr().AddThreat(target, 1000000.0f);
         }
 
         void Register() override

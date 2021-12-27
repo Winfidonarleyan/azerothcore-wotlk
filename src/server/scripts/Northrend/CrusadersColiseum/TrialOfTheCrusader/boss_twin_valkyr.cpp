@@ -382,12 +382,6 @@ struct boss_twin_valkyrAI : public ScriptedAI
                             break;
                     }
 
-                    /*
-                    if( Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 0.0f, true, essenceId) )
-                        me->CastSpell(target, me->GetEntry()==NPC_LIGHTBANE ? SPELL_LIGHT_TOUCH : SPELL_DARK_TOUCH, false);
-                    events.RepeatEvent(urand(45000,50000));
-                    */
-
                     GuidVector tList;
                     Map::PlayerList const& pList = me->GetMap()->GetPlayers();
                     if (pList.getSize())

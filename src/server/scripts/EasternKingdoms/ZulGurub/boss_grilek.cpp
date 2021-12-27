@@ -82,7 +82,7 @@ public:
                         DoCast(me, SPELL_AVATAR);
                         if (Unit* victim = me->GetVictim())
                         {
-                            if (DoGetThreat(victim))
+                            if (GetThreat(victim))
                                 DoModifyThreatPercent(victim, -50);
                         }
 

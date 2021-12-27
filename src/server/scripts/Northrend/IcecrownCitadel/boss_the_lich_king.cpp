@@ -3018,7 +3018,7 @@ public:
 
             GetCaster()->ToCreature()->SetInCombatWithZone();
             GetCaster()->ToCreature()->AI()->AttackStart(GetHitUnit());
-            GetCaster()->AddThreat(GetHitUnit(), GetCaster()->GetMaxHealth() * 0.2f);
+            GetCaster()->GetThreatMgr().AddThreat(GetHitUnit(), GetCaster()->GetMaxHealth() * 0.2f);
         }
 
         void Register() override

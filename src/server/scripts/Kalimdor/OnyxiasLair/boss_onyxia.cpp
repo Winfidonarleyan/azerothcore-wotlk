@@ -335,7 +335,7 @@ public:
                 me->AttackStop();
                 me->SetReactState(REACT_PASSIVE);
                 me->StopMoving();
-                DoResetThreat();
+                ResetThreatList();
                 me->GetMotionMaster()->MovePoint(10, OnyxiaMoveData[0].x, OnyxiaMoveData[0].y, OnyxiaMoveData[0].z);
                 break;
             }
@@ -385,7 +385,7 @@ public:
                 Talk(SAY_PHASE_3_TRANS);
                 me->SendMeleeAttackStop(me->GetVictim());
                 me->GetMotionMaster()->MoveLand(13, OnyxiaMoveData[0].x + 1.0f, OnyxiaMoveData[0].y, OnyxiaMoveData[0].z, 12.0f);
-                DoResetThreat();
+                ResetThreatList();
                 break;
             }
             case EVENT_SPELL_FIREBALL_FIRST:

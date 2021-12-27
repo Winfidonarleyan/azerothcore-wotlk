@@ -421,7 +421,7 @@ void Unit::Update(uint32 p_time)
         SendThreatListUpdate();
 
     // update combat timer only for players and pets (only pets with PetAI)
-    if (IsInCombat() && (GetTypeId() == TYPEID_PLAYER || ((IsPet() || HasUnitTypeMask(UNIT_MASK_CONTROLABLE_GUARDIAN)) && IsControlledByPlayer())))
+    if (IsEngaged() && (GetTypeId() == TYPEID_PLAYER || ((IsPet() || HasUnitTypeMask(UNIT_MASK_CONTROLABLE_GUARDIAN)) && IsControlledByPlayer())))
     {
         // Check UNIT_STATE_MELEE_ATTACKING or UNIT_STATE_CHASE (without UNIT_STATE_FOLLOW in this case) so pets can reach far away
         // targets without stopping half way there and running off.
@@ -1006,7 +1006,7 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
                 victim->ToCreature()->SetLastDamagedTime(sWorld->GetGameTime() + MAX_AGGRO_RESET_TIME);
 
             if (attacker)
-                victim->AddThreat(attacker, float(damage), damageSchoolMask, spellProto);
+                victim->GetThreatMgr().AddThreat(attacker, float(damage), spellProto);
         }
         else                                                // victim is a player
         {
@@ -8182,7 +8182,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, AuraEffect* triggere
                             triggered_spell_id = 54445;
                             target = this;
                             float addThreat = float(CalculatePct(procSpell->Effects[0].CalcValue(this), triggerAmount));
-                            victim->AddThreat(this, addThreat);
+                            victim->GetThreatMgr().AddThreat(this, addThreat);
                             break;
                         }
                     // Silverback
@@ -8825,7 +8825,7 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, uint32 damage, AuraEffect* trigg
                             return false;
 
                         if (victim && victim->IsAlive())
-                            victim->GetThreatMgr().modifyThreatPercent(this, -10);
+                            victim->GetThreatMgr().ModifyThreatByPercent(this, -10);
 
                         basepoints0 = int32(CountPctFromMaxHealth(triggerAmount));
                         trigger_spell_id = 31616;
@@ -9851,7 +9851,8 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
         SetInCombatWith(victim);
         if (victim->GetTypeId() == TYPEID_PLAYER)
             victim->SetInCombatWith(this);
-        AddThreat(victim, 0.0f);
+
+        GetThreatMgr().AddThreat(victim, 0.0f);
 
         creature->SendAIReaction(AI_REACTION_HOSTILE);
         creature->CallAssistance();
@@ -10701,27 +10702,33 @@ int32 Unit::HealBySpell(HealInfo& healInfo, bool critical)
     return gain;
 }
 
-void Unit::SendEnergizeSpellLog(Unit* victim, uint32 spellID, uint32 damage, Powers powerType)
+void Unit::SendEnergizeSpellLog(Unit* victim, uint32 spellId, int32 damage, Powers powerType)
 {
     WorldPacket data(SMSG_SPELLENERGIZELOG, (8 + 8 + 4 + 4 + 4 + 1));
     data << victim->GetPackGUID();
     data << GetPackGUID();
-    data << uint32(spellID);
+    data << uint32(spellId);
     data << uint32(powerType);
-    data << uint32(damage);
+    data << int32(damage);
     SendMessageToSet(&data, true);
 }
 
-void Unit::EnergizeBySpell(Unit* victim, uint32 spellID, uint32 damage, Powers powerType)
+void Unit::EnergizeBySpell(Unit* victim, uint32 spellID, int32 damage, Powers powerType)
 {
-    SendEnergizeSpellLog(victim, spellID, damage, powerType);
+    if (SpellInfo const* info = sSpellMgr->GetSpellInfo(spellID))
+        EnergizeBySpell(victim, info, damage, powerType);
+}
+
+void Unit::EnergizeBySpell(Unit* victim, SpellInfo const* spellInfo, int32 damage, Powers powerType)
+{
+    SendEnergizeSpellLog(victim, spellInfo->Id, damage, powerType);
+
     // needs to be called after sending spell log
     victim->ModifyPower(powerType, damage);
 
     if (powerType != POWER_HAPPINESS)
     {
-        SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellID);
-        victim->getHostileRefMgr().threatAssist(this, float(damage) * 0.5f, spellInfo);
+        victim->GetThreatMgr().ForwardThreatForAssistingMe(this, float(damage) / 2, spellInfo);
     }
 }
 
@@ -12901,7 +12908,7 @@ void Unit::CombatStart(Unit* victim, bool initialAggro)
             victim->SetStandState(UNIT_STAND_STATE_STAND);
         }
 
-        if (!victim->IsInCombat() && victim->GetTypeId() != TYPEID_PLAYER && !victim->ToCreature()->HasReactState(REACT_PASSIVE) && victim->ToCreature()->IsAIEnabled)
+        if (!victim->IsEngaged() && victim->GetTypeId() != TYPEID_PLAYER && !victim->ToCreature()->HasReactState(REACT_PASSIVE) && victim->ToCreature()->IsAIEnabled)
         {
             if (victim->IsPet())
                 victim->ToCreature()->AI()->AttackedBy(this); // PetAI has special handler before AttackStart()
@@ -12911,9 +12918,7 @@ void Unit::CombatStart(Unit* victim, bool initialAggro)
                 // if the target is an NPC with a pet or minion, pet should react.
                 if (Unit* victimControlledUnit = victim->GetFirstControlled())
                 {
-                    victimControlledUnit->SetInCombatWith(this);
-                    SetInCombatWith(victimControlledUnit);
-                    victimControlledUnit->AddThreat(this, 0.0f);
+                    EngageWithTarget(victimControlledUnit);
                 }
             }
 
@@ -12924,13 +12929,12 @@ void Unit::CombatStart(Unit* victim, bool initialAggro)
                 {
                     /* warding off to not take over aggro for no reason
                     Using only AddThreat causes delay in attack */
-                    if (!victimOwner->IsInCombat() && victimOwner->IsAIEnabled)
+                    if (!victimOwner->IsEngaged() && victimOwner->IsAIEnabled)
                     {
                         victimOwner->ToCreature()->AI()->AttackStart(this);
                     }
-                    victimOwner->SetInCombatWith(this);
-                    SetInCombatWith(victimOwner);
-                    victimOwner->AddThreat(this, 0.0f);
+
+                    EngageWithTarget(victimOwner);
                 }
             }
         }
@@ -12973,11 +12977,12 @@ void Unit::CombatStartOnCast(Unit* target, bool initialAggro, uint32 duration)
             owner->SetInCombatWith(target, duration);
     }
 
-    Unit* who = target->GetCharmerOrOwnerOrSelf();
-    if (who->GetTypeId() == TYPEID_PLAYER)
-        SetContestedPvP(who->ToPlayer());
-
     Player* me = GetCharmerOrOwnerPlayerOrPlayerItself();
+    Unit* who = target->GetCharmerOrOwnerOrSelf();
+
+    if (me && who->GetTypeId() == TYPEID_PLAYER)
+        me->SetContestedPvP(who->ToPlayer());
+
     if (me && who->IsPvP() && (who->GetTypeId() != TYPEID_PLAYER || !me->duel || me->duel->Opponent != who))
     {
         me->UpdatePvP(true);
@@ -13003,7 +13008,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy, uint32 duration)
     if (GetTypeId() == TYPEID_UNIT && enemy && HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC) && enemy->GetCharmerOrOwnerPlayerOrPlayerItself())
         RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC); // unit has engaged in combat, remove immunity so players can fight back
 
-    if (IsInCombat())
+    if (IsEngaged())
         return;
 
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
@@ -13022,7 +13027,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy, uint32 duration)
                 creature->AI()->EnterCombat(enemy);
 
             if (creature->GetFormation())
-                creature->GetFormation()->MemberAttackStart(creature, enemy);
+                creature->GetFormation()->MemberEngagingTarget(creature, enemy);
         }
 
         creature->RefreshSwimmingFlag();
@@ -13147,7 +13152,7 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellInfo const* bySpell, Wo
 
     // can't attack invisible (ignore stealth for aoe spells) also if the area being looked at is from a spell use the dynamic object created instead of the casting unit.
     //Ignore stealth if target is player and unit in combat with same player
-    if ((!bySpell || !bySpell->HasAttribute(SPELL_ATTR6_IGNORE_PHASE_SHIFT)) && (obj ? !obj->CanSeeOrDetect(target, bySpell && bySpell->IsAffectingArea()) : !CanSeeOrDetect(target, (bySpell && bySpell->IsAffectingArea()) || (target->GetTypeId() == TYPEID_PLAYER && target->HasStealthAura() && target->IsInCombat() && IsInCombatWith(target)))))
+    if ((!bySpell || !bySpell->HasAttribute(SPELL_ATTR6_IGNORE_PHASE_SHIFT)) && (obj ? !obj->CanSeeOrDetect(target, bySpell && bySpell->IsAffectingArea()) : !CanSeeOrDetect(target, (bySpell && bySpell->IsAffectingArea()) || (target->GetTypeId() == TYPEID_PLAYER && target->HasStealthAura() && target->IsEngaged() && IsInCombatWith(target)))))
         return false;
 
     // can't attack dead
@@ -13720,7 +13725,7 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
             ++ToPlayer()->m_forced_speed_changes[mtype];
 
             // Xinef: update speed of pet also
-            if (!IsInCombat())
+            if (!IsEngaged())
             {
                 Unit* pet = ToPlayer()->GetPet();
                 if (!pet)
@@ -13730,7 +13735,7 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
                 if (pet && (pet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_POSSESSED) || pet->IsVehicle()))
                     pet = nullptr;
 
-                if (pet && pet->GetTypeId() == TYPEID_UNIT && !pet->IsInCombat() && pet->GetMotionMaster()->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
+                if (pet && pet->GetTypeId() == TYPEID_UNIT && !pet->IsEngaged() && pet->GetMotionMaster()->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
                     pet->UpdateSpeed(mtype, forced);
                 if (Unit* critter = ObjectAccessor::GetUnit(*this, GetCritterGUID()))
                     critter->UpdateSpeed(mtype, forced);
@@ -13857,7 +13862,7 @@ bool Unit::CanHaveThreatList() const
         return false;
 
     // summons can not have a threat list, unless they are controlled by a creature
-    if (HasUnitTypeMask(UNIT_MASK_MINION | UNIT_MASK_GUARDIAN | UNIT_MASK_CONTROLABLE_GUARDIAN) && ((Pet*)this)->GetOwnerGUID().IsPlayer())
+    if (HasUnitTypeMask(UNIT_MASK_MINION | UNIT_MASK_GUARDIAN | UNIT_MASK_CONTROLABLE_GUARDIAN) && GetOwnerGUID().IsPlayer())
         return false;
 
     return true;
@@ -13873,26 +13878,6 @@ float Unit::ApplyTotalThreatModifier(float fThreat, SpellSchoolMask schoolMask)
     SpellSchools school = GetFirstSchoolInMask(schoolMask);
 
     return fThreat * m_threatModifier[school];
-}
-
-//======================================================================
-
-void Unit::AddThreat(Unit* victim, float fThreat, SpellSchoolMask schoolMask, SpellInfo const* threatSpell)
-{
-    // Only mobs can manage threat lists
-    if (CanHaveThreatList() && !HasUnitState(UNIT_STATE_EVADE))
-    {
-        m_ThreatMgr.addThreat(victim, fThreat, schoolMask, threatSpell);
-    }
-}
-
-//======================================================================
-
-void Unit::DeleteThreatList()
-{
-    if (CanHaveThreatList() && !m_ThreatMgr.IsThreatListEmpty())
-        SendClearThreatListOpcode();
-    m_ThreatMgr.clearReferences();
 }
 
 //======================================================================
@@ -13994,11 +13979,11 @@ Unit* Creature::SelectVictim()
         if (!target && IsSummon())
             if (Unit* owner = ToTempSummon()->GetOwner())
             {
-                if (owner->IsInCombat())
+                if (owner->IsEngaged())
                     target = owner->getAttackerForHelper();
                 if (!target)
                     for (ControlSet::const_iterator itr = owner->m_Controlled.begin(); itr != owner->m_Controlled.end(); ++itr)
-                        if ((*itr)->IsInCombat())
+                        if ((*itr)->IsEngaged())
                         {
                             target = (*itr)->getAttackerForHelper();
                             if (target)
@@ -16007,8 +15992,7 @@ Player* Unit::GetSpellModOwner() const
         return player;
 
     if (Unit* owner = GetOwner())
-        if (Player* player = owner->ToPlayer())
-            return player;
+        return owner->ToPlayer();
 
     return nullptr;
 }
@@ -16519,44 +16503,6 @@ float Unit::GetAPMultiplier(WeaponAttackType attType, bool normalized)
 bool Unit::IsUnderLastManaUseEffect() const
 {
     return  getMSTimeDiff(m_lastManaUse, World::GetGameTimeMS()) < 5000;
-}
-
-void Unit::SetContestedPvP(Player* attackedPlayer, bool lookForNearContestedGuards)
-{
-    Player* player = GetCharmerOrOwnerPlayerOrPlayerItself();
-
-    if (!player || ((attackedPlayer && (attackedPlayer == player || (player->duel && player->duel->Opponent == attackedPlayer))) || player->InBattleground()))
-        return;
-
-    // check if there any guards that should care about the contested flag on player
-    if (lookForNearContestedGuards)
-    {
-        std::list<Unit*> targets;
-        Acore::NearestVisibleDetectableContestedGuardUnitCheck u_check(this);
-        Acore::UnitListSearcher<Acore::NearestVisibleDetectableContestedGuardUnitCheck> searcher(this, targets, u_check);
-        Cell::VisitAllObjects(this, searcher, MAX_AGGRO_RADIUS);
-
-        // return if there are no contested guards found
-        if (!targets.size())
-        {
-            return;
-        }
-    }
-
-    player->SetContestedPvPTimer(30000);
-    if (!player->HasUnitState(UNIT_STATE_ATTACK_PLAYER))
-    {
-        player->AddUnitState(UNIT_STATE_ATTACK_PLAYER);
-        player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP);
-        // call MoveInLineOfSight for nearby contested guards
-        AddToNotify(NOTIFY_AI_RELOCATION);
-    }
-    if (!HasUnitState(UNIT_STATE_ATTACK_PLAYER))
-    {
-        AddUnitState(UNIT_STATE_ATTACK_PLAYER);
-        // call MoveInLineOfSight for nearby contested guards
-        AddToNotify(NOTIFY_AI_RELOCATION);
-    }
 }
 
 void Unit::AddPetAura(PetAura const* petSpell)
@@ -17852,7 +17798,7 @@ void Unit::RemoveCharmedBy(Unit* charmer)
     {
         if (Unit* target = ObjectAccessor::GetUnit(*this, itr->first))
             if (!IsFriendlyTo(target))
-                AddThreat(target, itr->second);
+                GetThreatMgr().AddThreat(target, itr->second);
     }
 
     _charmThreatInfo.clear();
@@ -18826,7 +18772,7 @@ void Unit::_EnterVehicle(Vehicle* vehicle, int8 seatId, AuraApplication const* a
 
     if (Player* player = ToPlayer())
     {
-        if (vehicle->GetBase()->GetTypeId() == TYPEID_PLAYER && player->IsInCombat())
+        if (vehicle->GetBase()->GetTypeId() == TYPEID_PLAYER && player->IsEngaged())
             return;
 
         sScriptMgr->AnticheatSetUnderACKmount(player);
