@@ -16,8 +16,9 @@
  */
 
 #include "CreatureScript.h"
-#include "Opcodes.h"
+#include "GridNotifiers.h"
 #include "ScriptedCreature.h"
+#include "SpellScript.h"
 #include "SpellScriptLoader.h"
 #include "WorldPacket.h"
 #include "the_eye.h"
@@ -1140,12 +1141,29 @@ class spell_kaelthas_mind_control : public SpellScript
         {
             targets.remove_if(Acore::ObjectGUIDCheck(victim->GetGUID(), true));
         }
-        targets.remove_if(Acore::ObjectTypeIdCheck(TYPEID_PLAYER, false));
+
+        targets.remove_if([&](WorldObject const* target) -> bool
+        {
+            if (!target->ToPlayer())
+                return true;
+
+            return (!GetCaster()->IsWithinLOSInMap(target));
+        });
+    }
+
+    void HandleEffect(SpellEffIndex /*effIndex*/)
+    {
+        if (!GetCaster() || !GetHitPlayer())
+            return;
+
+        if (Player* player = GetHitPlayer())
+            GetCaster()->GetThreatMgr().ResetThreat(player);
     }
 
     void Register() override
     {
         OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_kaelthas_mind_control::SelectTarget, EFFECT_ALL, TARGET_UNIT_SRC_AREA_ENEMY);
+        OnEffectHitTarget += SpellEffectFn(spell_kaelthas_mind_control::HandleEffect, EFFECT_ALL, SPELL_AURA_ANY);
     }
 };
 
