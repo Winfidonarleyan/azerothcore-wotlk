@@ -20,6 +20,9 @@
 #include "InstanceScript.h"
 #include "SpellScriptLoader.h"
 #include "black_temple.h"
+#include "SpellAuraEffects.h"
+#include "SpellAuras.h"
+#include "SpellScript.h"
 
 DoorData const doorData[] =
 {
@@ -59,6 +62,7 @@ ObjectData const creatureData[] =
     { NPC_VERAS_DARKSHADOW,          DATA_VERAS_DARKSHADOW          },
     { NPC_AKAMA_ILLIDAN,             DATA_AKAMA_ILLIDAN             },
     { NPC_ILLIDAN_STORMRAGE,         DATA_ILLIDAN_STORMRAGE         },
+    { NPC_BLACK_TEMPLE_TRIGGER,      DATA_BLACK_TEMPLE_TRIGGER      },
     { 0,                             0                              }
 };
 
@@ -104,7 +108,6 @@ public:
         {
             switch (creature->GetEntry())
             {
-                case NPC_VENGEFUL_SPIRIT:
                 case NPC_SHADOWY_CONSTRUCT:
                     if (Creature* teron = GetCreature(DATA_TERON_GOREFIEND))
                         teron->AI()->JustSummoned(creature);
@@ -163,18 +166,34 @@ public:
             if (!InstanceScript::SetBossState(type, state))
                 return false;
 
-            if (type == DATA_SHADE_OF_AKAMA && state == DONE)
+            if (state == DONE)
             {
-                for (ObjectGuid const& guid : ashtongueGUIDs)
-                    if (Creature* ashtongue = instance->GetCreature(guid))
-                        ashtongue->SetFaction(FACTION_ASHTONGUE_DEATHSWORN);
+                switch (type)
+                {
+                    case DATA_HIGH_WARLORD_NAJENTUS:
+                        if (Creature* trigger = GetCreature(DATA_BLACK_TEMPLE_TRIGGER))
+                            trigger->AI()->Talk(EMOTE_NAJENTUS_DEFEATED);
+                        break;
+                    case DATA_SHADE_OF_AKAMA:
+                        for (ObjectGuid const& guid : ashtongueGUIDs)
+                            if (Creature* ashtongue = instance->GetCreature(guid))
+                                ashtongue->SetFaction(FACTION_ASHTONGUE_DEATHSWORN);
+                        [[fallthrough]];
+                    case DATA_TERON_GOREFIEND:
+                    case DATA_GURTOGG_BLOODBOIL:
+                    case DATA_RELIQUARY_OF_SOULS:
+                        if (AllBossesDone({ DATA_SHADE_OF_AKAMA, DATA_TERON_GOREFIEND, DATA_GURTOGG_BLOODBOIL, DATA_RELIQUARY_OF_SOULS }))
+                            if (Creature* trigger = GetCreature(DATA_BLACK_TEMPLE_TRIGGER))
+                                trigger->AI()->Talk(EMOTE_LOWER_TEMPLE_DEFEATED);
+                        break;
+                    case DATA_ILLIDARI_COUNCIL:
+                        if (Creature* akama = GetCreature(DATA_AKAMA_ILLIDAN))
+                            akama->AI()->DoAction(0);
+                        break;
+                    default:
+                        break;
+                }
             }
-            else if (type == DATA_ILLIDARI_COUNCIL && state == DONE)
-            {
-                if (Creature* akama = GetCreature(DATA_AKAMA_ILLIDAN))
-                    akama->AI()->DoAction(0);
-            }
-
             return true;
         }
 
@@ -458,6 +477,48 @@ class spell_black_temple_dementia_aura : public AuraScript
     }
 };
 
+// 39649 - Summon Shadowfiends
+class spell_black_temple_summon_shadowfiends : public SpellScript
+{
+    PrepareSpellScript(spell_black_temple_summon_shadowfiends);
+
+    bool Validate(SpellInfo const* /*spellInfo*/) override
+    {
+        return ValidateSpellInfo({ SPELL_SUMMON_SHADOWFIENDS });
+    }
+
+    void HandleScriptEffect(SpellEffIndex /*effIndex*/)
+    {
+        Unit* caster = GetCaster();
+        if (!caster)
+            return;
+
+        for (uint8 i = 0; i < 11; i++)
+            caster->CastSpell(caster, SPELL_SUMMON_SHADOWFIENDS, true);
+    }
+
+    void Register() override
+    {
+        OnEffectHitTarget += SpellEffectFn(spell_black_temple_summon_shadowfiends::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+    }
+};
+
+class spell_black_temple_l5_arcane_charge : public SpellScript
+{
+    PrepareSpellScript(spell_black_temple_l5_arcane_charge)
+
+    void RecalculateDamage()
+    {
+        uint32 damage = GetHitUnit()->SpellDamageBonusTaken(GetCaster(), GetSpellInfo(), GetHitUnit()->CountPctFromMaxHealth(100), SPELL_DIRECT_DAMAGE);
+        SetHitDamage(int32(damage));
+    }
+
+    void Register() override
+    {
+        OnHit += SpellHitFn(spell_black_temple_l5_arcane_charge::RecalculateDamage);
+    }
+};
+
 void AddSC_instance_black_temple()
 {
     new instance_black_temple();
@@ -473,5 +534,6 @@ void AddSC_instance_black_temple()
     RegisterSpellScript(spell_black_temple_consuming_strikes_aura);
     RegisterSpellScript(spell_black_temple_curse_of_vitality_aura);
     RegisterSpellScript(spell_black_temple_dementia_aura);
+    RegisterSpellScript(spell_black_temple_summon_shadowfiends);
+    RegisterSpellScript(spell_black_temple_l5_arcane_charge);
 }
-

@@ -19,7 +19,9 @@
 #include "CellImpl.h"
 #include "CreatureScript.h"
 #include "GridNotifiers.h"
+#include "PassiveAI.h"
 #include "ScriptedCreature.h"
+#include "SpellScript.h"
 #include "SpellScriptLoader.h"
 #include "sunwell_plateau.h"
 
@@ -171,7 +173,7 @@ public:
 
         void KilledUnit(Unit* victim) override
         {
-            if (victim->GetTypeId() == TYPEID_PLAYER && roll_chance_i(50))
+            if (victim->IsPlayer() && roll_chance_i(50))
                 Talk(YELL_KILL);
         }
 
@@ -279,7 +281,7 @@ public:
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
-            switch(events.ExecuteEvent())
+            switch (events.ExecuteEvent())
             {
                 case EVENT_RESTORE_COMBAT:
                     me->SetReactState(REACT_AGGRESSIVE);
@@ -531,7 +533,7 @@ class DoorsGuidCheck
 public:
     bool operator()(WorldObject* object) const
     {
-        if (object->GetTypeId() != TYPEID_UNIT)
+        if (!object->IsCreature())
             return true;
 
         Creature* cr = object->ToCreature();
@@ -563,4 +565,3 @@ void AddSC_boss_felmyst()
     RegisterSpellScript(spell_felmyst_fog_of_corruption_charm_aura);
     RegisterSpellScript(spell_felmyst_open_brutallus_back_doors);
 }
-

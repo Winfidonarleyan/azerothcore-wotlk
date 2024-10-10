@@ -16,9 +16,11 @@
  */
 
 #include "CreatureScript.h"
+#include "PassiveAI.h"
 #include "Player.h"
 #include "ScriptedCreature.h"
-#include "SpellInfo.h"
+#include "SpellAuraEffects.h"
+#include "SpellScript.h"
 #include "SpellScriptLoader.h"
 #include "sunwell_plateau.h"
 
@@ -391,7 +393,7 @@ class spell_entropius_negative_energy : public SpellScript
 
     bool Load() override
     {
-        return GetCaster()->GetTypeId() == TYPEID_UNIT;
+        return GetCaster()->IsCreature();
     }
 
     void FilterTargets(std::list<WorldObject*>& targets)
@@ -483,4 +485,3 @@ void AddSC_boss_muru()
     RegisterSpellScript(spell_entropius_void_zone_visual_aura);
     RegisterSpellScript(spell_entropius_black_hole_effect);
 }
-
